@@ -1,1 +1,2 @@
 py="hali"
+c="viszlat"
