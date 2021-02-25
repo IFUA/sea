@@ -465,7 +465,7 @@ def search_text(accounts, search_value, category=None, amount=None, duration=Non
         results = usageSearch(results, usage) # only searching in the results that has been filtered above
     return results
 
-search_text(accounts=account_list, search_value="stanitzel rotten")[0].desc
+#search_text(accounts=account_list, search_value="stanitzel rotten")[0].desc
 
 # function for 1. post request
 def stage3(results,content,filters):
@@ -477,7 +477,7 @@ def stage3(results,content,filters):
         "question": None,
         "filter": filters
         }
-        response=json.dumps(dict2, indent=4)
+        response=json.dumps(dict2, indent=4,ensure_ascii=False)
     elif results[0].stage3_result=="Entscheidungsbaum (Instandhaltung)":
         dict2={
         "sid": content["sid"],
@@ -485,12 +485,11 @@ def stage3(results,content,filters):
         "cat_list": None,
         "question": {
                     "id": q1.id,
-                    "text": q1.text
-                    },
-                    "answers": q1.answers,
+                    "text": q1.text,
+                    "answers": q1.answers},
         "filter": filters
         }
-        response=json.dumps(dict2, indent=4)  
+        response=json.dumps(dict2, indent=4,ensure_ascii=False)  
     elif results[0].stage3_result=="Entscheidungsbaum (WVDV)":
         dict2={
         "sid": content["sid"],
@@ -498,12 +497,11 @@ def stage3(results,content,filters):
         "cat_list": None,
         "question": {
                     "id": q4.id,
-                    "text": q4.text
-                    },
-                    "answers": q4.answers,
+                    "text": q4.text,
+                    "answers": q4.answers},
         "filter": filters
         }
-        response=json.dumps(dict2, indent=4) 
+        response=json.dumps(dict2, indent=4,ensure_ascii=False) 
     elif results[0].stage3_result=="Entscheidungsbaum (Sachgesamtheit)":
         dict2={
         "sid": content["sid"],
@@ -511,12 +509,11 @@ def stage3(results,content,filters):
         "cat_list": None,
         "question": {
                     "id": q7.id,
-                    "text": q7.text
-                    },
-                    "answers": q7.answers,
+                    "text": q7.text,
+                    "answers": q7.answers},
         "filter": filters
         }
-        response=json.dumps(dict2, indent=4) 
+        response=json.dumps(dict2, indent=4,ensure_ascii=False) 
 
     elif results[0].stage3_result=="Entscheidungsbaum (Einkauf/Vertrieb)":
         response="Entscheidungsbaum (Einkauf/Vertrieb) - have to clear the logic"
@@ -531,43 +528,40 @@ def stage3_2(results,content,filters):
         "question": None,
         "filter": filters
         }
-        response=json.dumps(dict2, indent=4)
+        response=json.dumps(dict2, indent=4,ensure_ascii=False)
     elif results[0].stage3_result=="Entscheidungsbaum (Instandhaltung)":
         dict2={
         "sid": content["sid"],
         "result_acc": None,
         "question": {
                     "id": q1.id,
-                    "text": q1.text
-                    },
-                    "answers": q1.answers,
+                    "text": q1.text,
+                    "answers": q1.answers},
         "filter": filters
         }
-        response=json.dumps(dict2, indent=4)  
+        response=json.dumps(dict2, indent=4,ensure_ascii=False)  
     elif results[0].stage3_result=="Entscheidungsbaum (WVDV)":
         dict2={
         "sid": content["sid"],
         "result_acc": None,
         "question": {
                     "id": q4.id,
-                    "text": q4.text
-                    },
-                    "answers": q4.answers,
+                    "text": q4.text,
+                    "answers": q4.answers},
         "filter": filters
         }
-        response=json.dumps(dict2, indent=4) 
+        response=json.dumps(dict2, indent=4,ensure_ascii=False) 
     elif results[0].stage3_result=="Entscheidungsbaum (Sachgesamtheit)":
         dict2={
         "sid": content["sid"],
         "result_acc": None,
         "question": {
                     "id": q7.id,
-                    "text": q7.text
-                    },
-                    "answers": q7.answers,
+                    "text": q7.text,
+                    "answers": q7.answers},
         "filter": filters
         }
-        response=json.dumps(dict2, indent=4) 
+        response=json.dumps(dict2, indent=4,ensure_ascii=False) 
 
     elif results[0].stage3_result=="Entscheidungsbaum (Einkauf/Vertrieb)":
         response="Entscheidungsbaum (Einkauf/Vertrieb) - have to clear the logic"
@@ -600,7 +594,7 @@ def search():
                 "question": create_answers(results)[questionLogic(results)[0]], # get the json of the first question from the d_question dict
                 "filter": filters
                 }
-        response=json.dumps(dict3, indent=4)
+        response=json.dumps(dict3, indent=4,ensure_ascii=False)
     return response
 
 
@@ -654,7 +648,7 @@ def questions():
         "Category": d_category[content["answer_id"]] 
         }
         }    
-        response=json.dumps(dict1, indent=4)
+        response=json.dumps(dict1, indent=4,ensure_ascii=False)
 
     elif content["answer_id"] != None and int(content["answer_id"])<=98: 
 
@@ -695,7 +689,7 @@ def questions():
                         "question": next_question,
                         "filter": filters
                         }
-                response=json.dumps(dict3, indent=4)
+                response=json.dumps(dict3, indent=4,ensure_ascii=False)
         elif len(results)<1:    
             response="Error: 0 in results!"
 
@@ -709,12 +703,11 @@ def questions():
                     "result_acc": None,
                     "question": {
                                 "id": d_tree[content["answer_id"]].next_question.id,
-                                "text": d_tree[content["answer_id"]].next_question.text
-                                },
-                                "answers": d_tree[content["answer_id"]].next_question.answers,
+                                "text": d_tree[content["answer_id"]].next_question.text,                            
+                                "answers": d_tree[content["answer_id"]].next_question.answers},
                     "filter": filters2
                     }
-            response=json.dumps(dict4, indent=4)
+            response=json.dumps(dict4, indent=4,ensure_ascii=False)
         else:
             if d_tree[content["answer_id"]].account_name=="Invest-Dummy-Konto":
                 dict5={
@@ -723,7 +716,7 @@ def questions():
                         "question": None,
                         "filter": filters2
                         }
-                response=json.dumps(dict5, indent=4)
+                response=json.dumps(dict5, indent=4,ensure_ascii=False)
             else: # this branch is Aufwandskonto
                 dict5={
                 "sid": content["sid"],
@@ -731,7 +724,7 @@ def questions():
                 "question": None,
                 "filter": filters2
                 }
-                response=json.dumps(dict5, indent=4)
+                response=json.dumps(dict5, indent=4,ensure_ascii=False)
 
     return response
     
