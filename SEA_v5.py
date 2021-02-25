@@ -3,6 +3,7 @@
 
 import re
 import json
+import os 
 import pandas as pd
 from flask import Flask
 from flask import request
@@ -52,12 +53,14 @@ class Usage:
         self.id = id
 
 def getExcelData():
-    #thisFolder = os.path.dirname(os.path.abspath(__file__))
-    #my_file = os.path.join(thisFolder, 'Datei.xlsx')
-    #excel_import = pd.read_excel(
-    #    my_file, dtype=str)
+    thisFolder = os.path.dirname(os.path.abspath(__file__))
+    my_file = os.path.join(thisFolder, 'Datei.xlsx')
     excel_import = pd.read_excel(
-        "C:\\Users\\cts\\Horváth & Partner GmbH\\IFUA-IDEX.TAN.T55170 - 02_Munka\\01_Projektmunka_IFUA\\Datei.xlsx", dtype=str)
+        my_file, dtype=str)
+    #excel_import = pd.read_excel(
+    #os.path.join(sys.path[0],"Datei.xlsx"), dtype=str)
+    #excel_import = pd.read_excel(
+    #    "C:\\Users\\cts\\Horváth & Partner GmbH\\IFUA-IDEX.TAN.T55170 - 02_Munka\\01_Projektmunka_IFUA\\Datei.xlsx", dtype=str)
     #excel_import = pd.read_excel(
         #"C:\\Users\\hdo\\Horváth & Partner GmbH\HP SAP S4 ACCOUNT IDENTIFIER FEJLESZTES NP - IFUA-IDEX.TAN.T55170 - 02_Munka\\01_Projektmunka_IFUA\\Datei.xlsx", dtype=str)
     listOfAccounts = []
@@ -136,7 +139,10 @@ def questionLogic(results):
 
 #Dictionary import (#https://stackoverflow.com/questions/26716616/convert-a-pandas-dataframe-to-a-dictionary)
 #amount
-xlsx = pd.ExcelFile('C:\\Users\\cts\\Horváth & Partner GmbH\\IFUA-IDEX.TAN.T55170 - 02_Munka\\01_Projektmunka_IFUA\\Datei.xlsx')
+#xlsx = pd.ExcelFile('C:\\Users\\cts\\Horváth & Partner GmbH\\IFUA-IDEX.TAN.T55170 - 02_Munka\\01_Projektmunka_IFUA\\Datei.xlsx')
+thisFolder = os.path.dirname(os.path.abspath(__file__))
+my_file = os.path.join(thisFolder, 'Datei.xlsx')
+xlsx = pd.ExcelFile(my_file)
 #xlsx = pd.ExcelFile('C:\\Users\\hdo\\Horváth & Partner GmbH\HP SAP S4 ACCOUNT IDENTIFIER FEJLESZTES NP - IFUA-IDEX.TAN.T55170 - 02_Munka\\01_Projektmunka_IFUA\\Datei.xlsx')
 df = xlsx.parse(xlsx.sheet_names[1])
 d_amount=df.set_index('ID').T.to_dict('records')[0]
@@ -281,24 +287,18 @@ def create_answers(results):
         
     d_questions={
     "Amount": {
-        "question": {
         "id": 1,
-        "text": "Amount?"
-        },
+        "text": "Amount?",
         "answers": l_answers_amount
     },
     "Duration": {
-        "question": {
         "id": 2,
-        "text": "Duration?"
-        },
+        "text": "Duration?",
         "answers":l_answers_duration
     },
     "Usage": {
-        "question": {
         "id": 3,
-        "text": "Usage?"
-        },
+        "text": "Usage?",
         "answers": l_answers_usage
     }
     }
@@ -394,11 +394,8 @@ d_tree={ a1.id:a1,
 
 
 #Übergeordnete kategorie 
-d_cats={
-        "question": {
-            "id": "c1",
-            "text": "Please choose a category:"
-        },
+d_cats={"id": "c1",
+        "text": "Please choose a category:",
         "answers": [
             {
                 "id": "c1",
@@ -739,13 +736,13 @@ def questions():
     return response
     
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=5000)
+    app.run(host='0.0.0.0', port=5000)
 
 
 #TODO: 
 # a questionLogic fv-ben a defaultba ne legyen olyan, amit nem lehet kérdezni! meg kell nézni, hogy milyen question logicok vannak és ami abba van, azt jelenítsae csak meg.
 # lementés egy táblába, 
-# json kiírás utf8 kódolásba-> Taschenrechner keresésre szétesik a szöveg
+# json kiírás utf8 kódolásba-> Taschenrechner keresésre szétesik a szöveg, cc
 
 
 
