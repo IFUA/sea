@@ -234,7 +234,7 @@ d_answers={1: {
       }
 
 #Adding answers for Usage questions to the d_answers dictionary
-for i in range(1,len(d_usage)):
+for i in range(1,len(d_usage)+1):
     d_answers[8+i]={
                 "id": i,
                 "text": d_usage[i],
@@ -261,10 +261,10 @@ for l in range(6,9):
 d_duration_id=dict(zip(excel_ids,api_ids))
 #Usage
 excel_ids=[]
-for l in range(9,98):
+for l in range(9,99):
     excel_ids.append(d_answers[l]["id"])
 api_ids=[]
-for l in range(9,98):
+for l in range(9,99):
     api_ids.append(l)
 d_usage_id=dict(zip(excel_ids,api_ids))
 
@@ -313,7 +313,7 @@ def create_answers(results):
         "text": d_usage[int(l_usage[i])] 
         }
         l_answers_usage.append(s)
-    
+
     #Getting rid of the nan answer for each question
     for i, d in enumerate(l_answers_duration):
         if pd.isna(d['text']):
