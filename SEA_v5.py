@@ -733,7 +733,7 @@ def questions():
     elif int(content["answer_id"])>100: #Decision tree
 
         filters2=str(content["filter"]).strip("}")+",'"+d_tree[int(content["answer_id"])].question.text+"':'"+str(d_tree[int(content["answer_id"])].text)+"'}"
-        filtero2=json.loads(filters2)
+        #filtero2=json.loads(filters2)
         if d_tree[int(content["answer_id"])].next_question is not None:
             dict4={
                     "sid": content["sid"],
@@ -742,7 +742,7 @@ def questions():
                                 "id": d_tree[int(content["answer_id"])].next_question.id,
                                 "text": d_tree[int(content["answer_id"])].next_question.text,                            
                                 "answers": d_tree[int(content["answer_id"])].next_question.answers},
-                    "filter": filtero2
+                    "filter": filters2
                     }
             response=json.dumps(dict4, indent=4,ensure_ascii=False)
         else:
@@ -751,7 +751,7 @@ def questions():
                         "sid": content["sid"],
                         "result_acc": {"name":d_tree[int(content["answer_id"])].account_name, "id":999910}, #id of Invest-dummy-Konto
                         "question": None,
-                        "filter": filtero2
+                        "filter": filters2
                         }
                 response=json.dumps(dict5, indent=4,ensure_ascii=False)
             else: # this branch is Aufwandskonto
@@ -759,7 +759,7 @@ def questions():
                 "sid": content["sid"],
                 "result_acc": {"name":results[0].desc,"id":results[0].id},
                 "question": None,
-                "filter": filtero2
+                "filter": filters2
                 }
                 response=json.dumps(dict5, indent=4,ensure_ascii=False)
 
