@@ -617,7 +617,7 @@ def questions():
             ...}} """ 
                      
     content = request.get_json()
-    app.logger.info("ddddd")
+    
     ##Checking what is already in the filter properties
     #category
     try: 
@@ -639,6 +639,10 @@ def questions():
         Usage=str({v: k for k, v in d_usage.items()}[content["filter"]["Usage"]])
     except: 
         Usage=None
+    
+    
+    app.logger.info(str(content["filter"]))
+    #app.logger.info(content["filter"]["Amount"])
     
     results=search_text(account_list,str(content["filter"]["search_text"]),category=Category,amount=Amount,duration=Duration,usage=Usage)
 
@@ -672,7 +676,7 @@ def questions():
 
         #Adding to the existing filter, the new question-answer pair - TODO: work on nicer formating - encoding!!
         filters=str(content["filter"]).strip("}")+",'"+str(str_question)+"':'"+str(d_answers[int(content["answer_id"])]["text"])+"'}"
-
+        filters=filters.replace("'",'"')
         # ha 1 results van, ha több results van
         if len(results)==1: # if there is 1 result->stage3
             
@@ -701,7 +705,7 @@ def questions():
     elif int(content["answer_id"])>100: #Decision tree
 
         filters2=str(content["filter"]).strip("}")+",'"+d_tree[int(content["answer_id"])].question.text+"':'"+str(d_tree[int(content["answer_id"])].text)+"'}"
-
+        
         if d_tree[int(content["answer_id"])].next_question is not None:
             dict4={
                     "sid": content["sid"],
