@@ -12,7 +12,11 @@ from difflib import get_close_matches
 from py_openthesaurus import OpenThesaurusWeb
 open_thesaurus = OpenThesaurusWeb()
 
+import logging
+
 app = Flask(__name__)
+
+logging.basicConfig(level=logging.DEBUG)
 
 class Account: #account_line
     def __init__(self, id, desc, searchTerms, negativeTerms, amount, duration, usage, stage2_logic, category,stage3_result):
@@ -613,6 +617,7 @@ def questions():
             ...}} """ 
                      
     content = request.get_json()
+    app.logger.info("ddddd")
     ##Checking what is already in the filter properties
     #category
     try: 
@@ -634,7 +639,7 @@ def questions():
         Usage=str({v: k for k, v in d_usage.items()}[content["filter"]["Usage"]])
     except: 
         Usage=None
-
+    
     results=search_text(account_list,str(content["filter"]["search_text"]),category=Category,amount=Amount,duration=Duration,usage=Usage)
 
     if content["answer_id"] in ["c1","c2","c3","c4","c5"]: #TODO make it dynamic
