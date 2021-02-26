@@ -11,13 +11,14 @@ from flask import request
 from difflib import get_close_matches 
 from py_openthesaurus import OpenThesaurusWeb
 open_thesaurus = OpenThesaurusWeb()
-
 import logging
 
 app = Flask(__name__)
 
 logging.basicConfig(level=logging.DEBUG)
 
+
+#Defining class for the rows (Accounts) in excel
 class Account: #account_line
     def __init__(self, id, desc, searchTerms, negativeTerms, amount, duration, usage, stage2_logic, category,stage3_result):
         self.id = id
@@ -34,7 +35,7 @@ class Account: #account_line
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
 
-
+#Defining class for the variables in excel
 class Amount:
     def __init__(self, id):
         self.id = id
@@ -42,7 +43,6 @@ class Amount:
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,
                           sort_keys=True, indent=4)
-
 
 class Duration:
     def __init__(self, id):
@@ -56,17 +56,15 @@ class Usage:
     def __init__(self, id):
         self.id = id
 
+
+# Getting excel data into the predefined objects
 def getExcelData():
     thisFolder = os.path.dirname(os.path.abspath(__file__))
     my_file = os.path.join(thisFolder, 'Datei.xlsx')
     excel_import = pd.read_excel(
         my_file, dtype=str)
     #excel_import = pd.read_excel(
-    #os.path.join(sys.path[0],"Datei.xlsx"), dtype=str)
-    #excel_import = pd.read_excel(
     #    "C:\\Users\\cts\\Horváth & Partner GmbH\\IFUA-IDEX.TAN.T55170 - 02_Munka\\01_Projektmunka_IFUA\\Datei.xlsx", dtype=str)
-    #excel_import = pd.read_excel(
-        #"C:\\Users\\hdo\\Horváth & Partner GmbH\HP SAP S4 ACCOUNT IDENTIFIER FEJLESZTES NP - IFUA-IDEX.TAN.T55170 - 02_Munka\\01_Projektmunka_IFUA\\Datei.xlsx", dtype=str)
     listOfAccounts = []
     for index, row in excel_import.iterrows():
         searchTerms = [""] if pd.isnull(
@@ -93,8 +91,10 @@ def getExcelData():
             ))
     return listOfAccounts
 
+#TODO fv-t magat bepakolni az account_list helyett?
 account_list = getExcelData()
 
+#Filtering for amount,duration, usage, categories
 def amountSearch(results, amount):
     newResults = []
     for account in results:
@@ -113,21 +113,23 @@ def durationSearch(results, duration):
                 newResults.append(account)
     return newResults
 
-
 def usageSearch(results, usage):
     newResults = []
     for account in results:
-        if(str(account.usage.id) == usage): # above functions can be simplified by leaving out a for loop like this - using dictionaries instead-> faster!!!
+        if(str(account.usage.id) == usage): 
             newResults.append(account)
     return newResults
 
-#Filtering for categories
+# TODO: above functions can be simplified by leaving out a for loop like this - using dictionaries instead-> faster!!!
+
 def categorySearch(results, category):
     newResults = []
     for account in results:
         if(str(account.category) == category): 
             newResults.append(account)
     return newResults
+
+### Stage 2: Amount, Duration, Usage question and answer dictionaries
 
 #Question logic
 def questionLogic(results):
@@ -137,11 +139,11 @@ def questionLogic(results):
     if len(set([''.join(lst) for lst in l_temp]))==1: # converting list to string to be able to get the distinct list values
         newResults=l_temp[0]
     else:
-        newResults=['Amount', 'Duration', 'Usage'] # default question and order - beletenni hogy ha nincs usage a leszurt excelbe akk a default se legyenusage
+        newResults=['Amount', 'Duration', 'Usage']
+        # TODO:default question and order - beletenni hogy ha nincs usage a leszurt excelbe akk a default se legyen usage
     return newResults
 
-
-#Dictionary import (#https://stackoverflow.com/questions/26716616/convert-a-pandas-dataframe-to-a-dictionary)
+#Importing additional excel sheets (id-text dictionaries) 
 #amount
 #xlsx = pd.ExcelFile('C:\\Users\\cts\\Horváth & Partner GmbH\\IFUA-IDEX.TAN.T55170 - 02_Munka\\01_Projektmunka_IFUA\\Datei.xlsx')
 thisFolder = os.path.dirname(os.path.abspath(__file__))
@@ -160,8 +162,34 @@ d_usage=df.set_index('ID').T.to_dict('records')[0]
 df = xlsx.parse(xlsx.sheet_names[4])
 d_category=df.set_index('ID').T.to_dict('records')[0]
 
+#Dictionary for übergeordnete categories 
+d_cats={"id": "c1",
+        "text": "Please choose a category:",
+        "answers": [
+            {
+                "id": "c1",
+                "text": d_category["c1"]
+            },
+            {
+                "id": "c2",
+                "text": d_category["c2"]
+            },
+            {
+                "id": "c3",
+                "text": d_category["c3"]
+            },
+            {
+                "id": "c4",
+                "text": d_category["c4"]
+            },
+                        {
+                "id": "c5",
+                "text": d_category["c5"]
+            }
+        ]
+}
 
-
+#All potential answers to stage2 questions
 #Answers for Amount and Duration questions
 d_answers={1: {
               "id": 0,
@@ -205,9 +233,6 @@ d_answers={1: {
               }
       }
 
-
-
-
 #Adding answers for Usage questions to the d_answers dictionary
 for i in range(1,len(d_usage)):
     d_answers[8+i]={
@@ -216,9 +241,6 @@ for i in range(1,len(d_usage)):
                 "question":"Usage"
                 }
 #d_answers id-s: 1 to 98
-
-
-### Stage 2: Amount, Duration, Usage question and answer dictionaries
 
 ### Reversed dicts per question type to get the api_ids for the answers
 #Amount
@@ -246,24 +268,24 @@ for l in range(9,98):
     api_ids.append(l)
 d_usage_id=dict(zip(excel_ids,api_ids))
 
-
-
-
-#Function for creating available answers for Amount,Duration,Usage quesstions
+#Function for getting available answers for Amount,Duration,Usage quesstions
 def create_answers(results):
     #Amount
+    # list of available amount ids
     l_amount=[]
     for i in range(len(results)):
         l_amount.extend(results[i].amount.id)
     l_amount=list(set(l_amount))
-
+    
+    #list of dictionaries of available amount ids
     l_answers_amount=[]
     for i in range(len(l_amount)): 
         s={
-        "id": d_amount_id[int(l_amount[i])], #l_amount[i]-hez a megfelelő api id kell
+        "id": d_amount_id[int(l_amount[i])], #api id for l_amount[i]
         "text": d_amount[int(l_amount[i])] 
         }
         l_answers_amount.append(s)
+        
     #Duration
     l_duration=[]
     for i in range(len(results)):
@@ -277,6 +299,7 @@ def create_answers(results):
         "text": d_duration[int(l_duration[i])] 
         }
         l_answers_duration.append(s)
+        
     #Usage
     l_usage=[]
     for i in range(len(results)):
@@ -291,27 +314,23 @@ def create_answers(results):
         }
         l_answers_usage.append(s)
     
-   
-        
-    #l_answers_duration.remove( = {key:val for key, val in l_answers_duration[0].items() if val != 6}
+    #Getting rid of the nan answer for each question
     for i, d in enumerate(l_answers_duration):
         if pd.isna(d['text']):
             l_answers_duration.pop(i)
             break
-    
-    #l_answers_duration.remove( = {key:val for key, val in l_answers_duration[0].items() if val != 6}
+
     for i, d in enumerate(l_answers_amount):
         if pd.isna(d['text']):
             l_answers_amount.pop(i)
             break
-    
-    #l_answers_duration.remove( = {key:val for key, val in l_answers_duration[0].items() if val != 6}
+
     for i, d in enumerate(l_answers_usage):
         if pd.isna(d['text']):
             l_answers_usage.pop(i)
             break
     
-    
+    # d_questions dictionary with the questions and the potential answers
     d_questions={
     "Amount": {
         "id": 1,
@@ -331,10 +350,9 @@ def create_answers(results):
     }
     return d_questions
 
-
 ### Stage 3 - Instandhaltung: linked lists for decision trees
 
-#Question és Answer class inicializálása
+#Defining Question and Answer class for the decision trees
 class Question:
     def __init__(self, id, text, answers):
         self.id = id
@@ -349,9 +367,8 @@ class Answer:
         self.question=question
         self.account_name = account_name
 
-
 #Question objects
-#When besoide Amount, Duration, Usage more questions or answers are used, these id-s should be changed as well
+#When beside Amount, Duration, Usage more questions or answers are used, these id-s should be changed as well
 #Instandhaltung decision tree
 q1=Question(4,"Handelt es sich um eine reine Instandhaltungsmaßnahme?",[{"id":101,"text":"Ja"},{"id":102,"text":"Nein"}])
 q2=Question(5,"Findet ein Austausch von bereits vorhandenen Gegenständen statt?",[{"id":103,"text":"Ja"},{"id":104,"text":"Nein"}])
@@ -365,11 +382,11 @@ q7=Question(10,"Gehört der Bedarf zu einer bestehenden / neuen Sachanlage? ",[{
 q8=Question(11,"Bitte geben Sie die Anlagennummer an.",[{"id":116,"text":"Bitte angeben"},{"id":117,"text":"Unbekannt"}])
 q9=Question(12,"Handelt es sich bei Ihrem Bedarf um einen Gegenstand, der nicht selbstständig genutzt werden kann? (z.B. Dockingstation)",[{"id":118,"text":"Ja"},{"id":119,"text":"Nein"}])
 #Einkauf/Vertrieb decision tree
+#TODO
 #q10=Question(13,"Handelt es um Transportkosten mit Bezug auf den Vertrieb? (Ausgangsfracht)",[{"id":120,"text":"Ja"},{"id":121,"text":"Nein"}])
 #q11=Question(14,"Handelt es sich um Versandkosten für ...?",[{"id":114,"text":"Fahrzeuge"},{"id":114,"text":"Fahrzeuge"},{"id":114,"text":"Fahrzeuge"},.........{"id":115,"text":"Nein"}])
 
 #it doesnt make sense. decision trees should only be used to decide if invest dummy konto or aufwandskonto should be used
-
 
 #Answer objects
 #When besoide Amount, Duration, Usage more questions or answers are used, these id-s should be changed as well
@@ -419,35 +436,9 @@ d_tree={ a1.id:a1,
          a19.id:a19
          }
 
+#TODO továbbra is felkommentelni
 
-#Übergeordnete kategorie 
-d_cats={"id": "c1",
-        "text": "Please choose a category:",
-        "answers": [
-            {
-                "id": "c1",
-                "text": d_category["c1"]
-            },
-            {
-                "id": "c2",
-                "text": d_category["c2"]
-            },
-            {
-                "id": "c3",
-                "text": d_category["c3"]
-            },
-            {
-                "id": "c4",
-                "text": d_category["c4"]
-            },
-                        {
-                "id": "c5",
-                "text": d_category["c5"]
-            }
-        ]
-}
-
-
+#Search function with text search (synonyms, positive-negative keywords), categories,amount,duration,usage
 def search_text(accounts, search_value, category=None, amount=None, duration=None, usage=None): 
     search_value_list = search_value.split(" ") # adjusted the code based on the Nonetype error - now it works
     results = []
@@ -733,7 +724,8 @@ def questions():
     elif int(content["answer_id"])>100: #Decision tree
 
         filters2=str(content["filter"]).strip("}")+",'"+d_tree[int(content["answer_id"])].question.text+"':'"+str(d_tree[int(content["answer_id"])].text)+"'}"
-        #filtero2=json.loads(filters2)
+        filters2=filters2.replace("'","\"")
+        filtero2=json.loads(filters2)
         if d_tree[int(content["answer_id"])].next_question is not None:
             dict4={
                     "sid": content["sid"],
@@ -742,7 +734,7 @@ def questions():
                                 "id": d_tree[int(content["answer_id"])].next_question.id,
                                 "text": d_tree[int(content["answer_id"])].next_question.text,                            
                                 "answers": d_tree[int(content["answer_id"])].next_question.answers},
-                    "filter": filters2
+                    "filter": filtero2
                     }
             response=json.dumps(dict4, indent=4,ensure_ascii=False)
         else:
@@ -751,7 +743,7 @@ def questions():
                         "sid": content["sid"],
                         "result_acc": {"name":d_tree[int(content["answer_id"])].account_name, "id":999910}, #id of Invest-dummy-Konto
                         "question": None,
-                        "filter": filters2
+                        "filter": filtero2
                         }
                 response=json.dumps(dict5, indent=4,ensure_ascii=False)
             else: # this branch is Aufwandskonto
@@ -759,7 +751,7 @@ def questions():
                 "sid": content["sid"],
                 "result_acc": {"name":results[0].desc,"id":results[0].id},
                 "question": None,
-                "filter": filters2
+                "filter": filtero2
                 }
                 response=json.dumps(dict5, indent=4,ensure_ascii=False)
 
