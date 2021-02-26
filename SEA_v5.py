@@ -676,11 +676,16 @@ def questions():
 
         #Adding to the existing filter, the new question-answer pair - TODO: work on nicer formating - encoding!!
         filters=str(content["filter"]).strip("}")+",'"+str(str_question)+"':'"+str(d_answers[int(content["answer_id"])]["text"])+"'}"
-        filters=filters.replace("'",'"')
+
+        filters=filters.replace("'","\"")
+        
+        print(filters)
+        filtero=json.loads(filters)
+        print(filtero)
         # ha 1 results van, ha több results van
         if len(results)==1: # if there is 1 result->stage3
             
-            response=stage3_2(results,content,filters)
+            response=stage3_2(results,content,filtero)
         
         elif len(results)>1:
             #ha null a kövi kérdés vagy megvolt a 3 kérdés, akkor itt ugrik át a decision tree-re
@@ -696,7 +701,7 @@ def questions():
                         "sid": content["sid"],
                         "result_acc": None,
                         "question": next_question,
-                        "filter": filters
+                        "filter": filtero
                         }
                 response=json.dumps(dict3, indent=4,ensure_ascii=False)
         elif len(results)<1:    
