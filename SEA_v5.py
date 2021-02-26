@@ -247,6 +247,8 @@ for l in range(9,98):
 d_usage_id=dict(zip(excel_ids,api_ids))
 
 
+
+
 #Function for creating available answers for Amount,Duration,Usage quesstions
 def create_answers(results):
     #Amount
@@ -288,7 +290,28 @@ def create_answers(results):
         "text": d_usage[int(l_usage[i])] 
         }
         l_answers_usage.append(s)
+    
+   
         
+    #l_answers_duration.remove( = {key:val for key, val in l_answers_duration[0].items() if val != 6}
+    for i, d in enumerate(l_answers_duration):
+        if pd.isna(d['text']):
+            l_answers_duration.pop(i)
+            break
+    
+    #l_answers_duration.remove( = {key:val for key, val in l_answers_duration[0].items() if val != 6}
+    for i, d in enumerate(l_answers_amount):
+        if pd.isna(d['text']):
+            l_answers_amount.pop(i)
+            break
+    
+    #l_answers_duration.remove( = {key:val for key, val in l_answers_duration[0].items() if val != 6}
+    for i, d in enumerate(l_answers_usage):
+        if pd.isna(d['text']):
+            l_answers_usage.pop(i)
+            break
+    
+    
     d_questions={
     "Amount": {
         "id": 1,
