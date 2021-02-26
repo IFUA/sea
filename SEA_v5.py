@@ -652,21 +652,21 @@ def questions():
 
     elif content["answer_id"] != None and int(content["answer_id"])<=98: 
 
-        str_question=d_answers[content["answer_id"]]["question"]# melyik kérdésre kaptam választ
+        str_question=d_answers[int(content["answer_id"])]["question"]# melyik kérdésre kaptam választ
                    
         #szűrés az érkezett válaszra - ez nincs benne a fenti search_text fv-ben, ott csak azok legyenek amik már a filter propertieben szerepelnek
         if str_question == "Amount":
-            results = amountSearch(results, str(d_answers[content["answer_id"]]["id"])) 
+            results = amountSearch(results, str(d_answers[int(content["answer_id"])]["id"])) 
         elif (str_question == "Duration") : 
-            results = durationSearch(results, str(d_answers[content["answer_id"]]["id"]))
+            results = durationSearch(results, str(d_answers[int(content["answer_id"])]["id"]))
         elif str_question == "Usage":
-            results = usageSearch(results, str(d_answers[content["answer_id"]]["id"]))  
+            results = usageSearch(results, str(d_answers[int(content["answer_id"])]["id"]))  
 
         l_question_logic=questionLogic(results) # kérdéssorrend
         question_nr=l_question_logic.index(str_question) #  amelyik kérdésre a választ kaptam annak mi az indexe
 
         #Adding to the existing filter, the new question-answer pair - TODO: work on nicer formating - encoding!!
-        filters=str(content["filter"]).strip("}")+",'"+str(str_question)+"':'"+str(d_answers[content["answer_id"]]["text"])+"'}"
+        filters=str(content["filter"]).strip("}")+",'"+str(str_question)+"':'"+str(d_answers[int(content["answer_id"])]["text"])+"'}"
 
         # ha 1 results van, ha több results van
         if len(results)==1: # if there is 1 result->stage3
@@ -693,26 +693,26 @@ def questions():
         elif len(results)<1:    
             response="Error: 0 in results!"
 
-    elif content["answer_id"]>100: #Decision tree
+    elif int(content["answer_id"])>100: #Decision tree
 
-        filters2=str(content["filter"]).strip("}")+",'"+d_tree[content["answer_id"]].question.text+"':'"+str(d_tree[content["answer_id"]].text)+"'}"
+        filters2=str(content["filter"]).strip("}")+",'"+d_tree[int(content["answer_id"])].question.text+"':'"+str(d_tree[int(content["answer_id"])].text)+"'}"
 
-        if d_tree[content["answer_id"]].next_question is not None:
+        if d_tree[int(content["answer_id"])].next_question is not None:
             dict4={
                     "sid": content["sid"],
                     "result_acc": None,
                     "question": {
-                                "id": d_tree[content["answer_id"]].next_question.id,
-                                "text": d_tree[content["answer_id"]].next_question.text,                            
-                                "answers": d_tree[content["answer_id"]].next_question.answers},
+                                "id": d_tree[int(content["answer_id"])].next_question.id,
+                                "text": d_tree[int(content["answer_id"])].next_question.text,                            
+                                "answers": d_tree[int(content["answer_id"])].next_question.answers},
                     "filter": filters2
                     }
             response=json.dumps(dict4, indent=4,ensure_ascii=False)
         else:
-            if d_tree[content["answer_id"]].account_name=="Invest-Dummy-Konto":
+            if d_tree[int(content["answer_id"])].account_name=="Invest-Dummy-Konto":
                 dict5={
                         "sid": content["sid"],
-                        "result_acc": {"name":d_tree[content["answer_id"]].account_name, "id":999910}, #id of Invest-dummy-Konto
+                        "result_acc": {"name":d_tree[int(content["answer_id"])].account_name, "id":999910}, #id of Invest-dummy-Konto
                         "question": None,
                         "filter": filters2
                         }
