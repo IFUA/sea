@@ -100,7 +100,7 @@ def amountSearch(results, amount):
     for account in results:
         ids = account.amount.id
         for acc_amount in ids:
-            if(str(acc_amount) == amount):
+            if(str(acc_amount) == amount or str(acc_amount)=="0"):
                 newResults.append(account)
     return newResults
 
@@ -108,8 +108,8 @@ def durationSearch(results, duration):
     newResults = []
     for account in results:
         ids = account.duration.id
-        for id in ids:
-            if(str(id) == duration):
+        for acc_duration in ids:
+            if(str(acc_duration) == duration or str(acc_duration)=="0"):
                 newResults.append(account)
     return newResults
 
@@ -277,6 +277,10 @@ def create_answers(results):
         l_amount.extend(results[i].amount.id)
     l_amount=list(set(l_amount))
     
+    # if there is a 0 (na) then all the answers should be shown
+    if "0" in l_amount:
+        l_amount=["1","2","3","4"]
+        
     #list of dictionaries of available amount ids
     l_answers_amount=[]
     for i in range(len(l_amount)): 
@@ -291,6 +295,10 @@ def create_answers(results):
     for i in range(len(results)):
         l_duration.extend(results[i].duration.id)
     l_duration=list(set(l_duration))
+
+    # if there is a 0 (na) then all the answers should be shown
+    if "0" in l_duration:
+        l_duration=["1","2"]
 
     l_answers_duration=[]
     for i in range(len(l_duration)): 
@@ -764,7 +772,6 @@ if __name__ == "__main__":
 #TODO: 
 # a questionLogic fv-ben a defaultba ne legyen olyan, amit nem lehet kérdezni! meg kell nézni, hogy milyen question logicok vannak és ami abba van, azt jelenítsae csak meg.
 # lementés egy táblába, 
-# json kiírás utf8 kódolásba-> Taschenrechner keresésre szétesik a szöveg, cc
 
 
 
