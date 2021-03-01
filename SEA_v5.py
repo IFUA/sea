@@ -504,6 +504,16 @@ def stage3(results,content,filters):
         "filter": filters
         }
         response=json.dumps(dict2, indent=4,ensure_ascii=False)
+        
+    if results[0].stage3_result=="Dummy":
+        dict2={ "sid":content["sid"],
+        "result_acc": {"name":"Invest-Dummy-Konto", "id":999910},
+        "cat_list": None,
+        "question": None,
+        "filter": filters
+        }
+        response=json.dumps(dict2, indent=4,ensure_ascii=False)
+        
     elif results[0].stage3_result=="Entscheidungsbaum (Instandhaltung)":
         dict2={
         "sid": content["sid"],
@@ -555,6 +565,15 @@ def stage3_2(results,content,filters):
         "filter": filters
         }
         response=json.dumps(dict2, indent=4,ensure_ascii=False)
+        
+    elif results[0].stage3_result=="Dummy":
+        dict2={ "sid":content["sid"],
+        "result_acc": {"name":"Invest-Dummy-Konto", "id":999910},
+        "question": None,
+        "filter": filters
+        }
+        response=json.dumps(dict2, indent=4,ensure_ascii=False)
+        
     elif results[0].stage3_result=="Entscheidungsbaum (Instandhaltung)":
         dict2={
         "sid": content["sid"],
