@@ -109,7 +109,7 @@ def durationSearch(results, duration):
     for account in results:
         ids = account.duration.id
         for acc_duration in ids:
-            if(str(acc_duration) == duration or str(acc_duration)=="0"):
+            if(str(acc_duration) == duration):
                 newResults.append(account)
     return newResults
 
@@ -139,7 +139,7 @@ def questionLogic(results):
     if len(set([''.join(lst) for lst in l_temp]))==1: # converting list to string to be able to get the distinct list values
         newResults=l_temp[0]
     else:
-        newResults=['Amount', 'Duration', 'Usage']
+        newResults=['Amount', 'Usage','Duration'] 
         # TODO:default question and order - beletenni hogy ha nincs usage a leszurt excelbe akk a default se legyen usage
     return newResults
 
