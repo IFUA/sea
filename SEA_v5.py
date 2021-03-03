@@ -759,7 +759,7 @@ def questions():
     
     results=search_text(account_list,str(content["filter"]["search_text"]),category=Category,amount=Amount,duration=Duration,usage=Usage)
 
-    if content["answer_id"] in ["c1","c2","c3","c4","c5"]: #TODO make it dynamic
+    if content["answer_id"] in [list(d_category.keys())]:
         results=categorySearch(account_list,str(content["answer_id"]))
         dict1={
         "sid": content["sid"],
