@@ -422,8 +422,8 @@ a17=Answer(117,"Unbekannt",next_question=None,question=q8,account_name="Invest-D
 a18=Answer(118,"Ja",next_question=None,question=q9,account_name="Invest-Dummy-Konto")
 a19=Answer(119,"Nein",next_question=None,question=q9,account_name="Aufwandskonto")
 #Einkauf/Vertrieb decision tree
-a20=Answer(120,"Ja",next_question=q12,question=q10,account_name=None)
-a21=Answer(121,"Nein",next_question=q11,question=q10,account_name=None)
+a20=Answer(120,"Ja",next_question=q11,question=q10,account_name=None)
+a21=Answer(121,"Nein",next_question=q12,question=q10,account_name=None)
 a22=Answer(122,"Fahrezeuge",next_question=None,question=q11,account_name="Specific account")
 a23=Answer(123,"Ersatzteile",next_question=None,question=q11,account_name="Specific account")
 a24=Answer(124,"Sonstiges",next_question=None,question=q11,account_name="Specific account")
@@ -818,7 +818,7 @@ def questions():
                         }
                 response=json.dumps(dict5, indent=4,ensure_ascii=False)
                 
-            elif d_tree[int(content["answer_id"])].account_name=="Specific Account":
+            elif d_tree[int(content["answer_id"])].account_name=="Specific account":
                 if d_tree[int(content["answer_id"])].id==122:
                     dict5={
                             "sid": content["sid"],
