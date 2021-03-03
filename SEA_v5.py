@@ -185,6 +185,34 @@ d_cats={"id": "c1",
                         {
                 "id": "c5",
                 "text": d_category["c5"]
+            },
+                    {
+                "id": "c6",
+                "text": d_category["c6"]
+            },
+            {
+                "id": "c7",
+                "text": d_category["c7"]
+            },
+            {
+                "id": "c8",
+                "text": d_category["c8"]
+            },
+            {
+                "id": "c9",
+                "text": d_category["c9"]
+            },
+                        {
+                "id": "c10",
+                "text": d_category["c10"]
+            },
+                                    {
+                "id": "c11",
+                "text": d_category["c11"]
+            },
+            {
+                "id": "c12",
+                "text": d_category["c12"]
             }
         ]
 }
