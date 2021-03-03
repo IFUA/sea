@@ -370,17 +370,17 @@ def create_answers(results):
     d_questions={
     "Amount": {
         "id": 1,
-        "text": "Amount?",
+        "text": "Betrag:",
         "answers": l_answers_amount
     },
     "Duration": {
         "id": 2,
-        "text": "Duration?",
+        "text": "Nutzungsdauer:",
         "answers":l_answers_duration
     },
     "Usage": {
         "id": 3,
-        "text": "Usage?",
+        "text": "Verwendungszweck:",
         "answers": l_answers_usage
     }
     }
@@ -759,7 +759,7 @@ def questions():
     
     results=search_text(account_list,str(content["filter"]["search_text"]),category=Category,amount=Amount,duration=Duration,usage=Usage)
 
-    if content["answer_id"] in [list(d_category.keys())]:
+    if content["answer_id"] in ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12']:
         results=categorySearch(account_list,str(content["answer_id"]))
         dict1={
         "sid": content["sid"],
