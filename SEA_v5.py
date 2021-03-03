@@ -577,7 +577,17 @@ def stage3(results,content,filters):
         response=json.dumps(dict2, indent=4,ensure_ascii=False) 
 
     elif results[0].stage3_result=="Entscheidungsbaum (Einkauf/Vertrieb)":
-        response="Entscheidungsbaum (Einkauf/Vertrieb) - have to clear the logic"
+        dict2={
+        "sid": content["sid"],
+        "result_acc": None,
+        "cat_list": None,
+        "question": {
+                    "id": q10.id,
+                    "text": q10.text,
+                    "answers": q10.answers},
+        "filter": filters
+        }
+        response=json.dumps(dict2, indent=4,ensure_ascii=False) 
     return response
 
 # function for 2. post request
@@ -634,7 +644,16 @@ def stage3_2(results,content,filters):
         response=json.dumps(dict2, indent=4,ensure_ascii=False) 
 
     elif results[0].stage3_result=="Entscheidungsbaum (Einkauf/Vertrieb)":
-        response="Entscheidungsbaum (Einkauf/Vertrieb) - have to clear the logic"
+        dict2={
+        "sid": content["sid"],
+        "result_acc": None,
+        "question": {
+                    "id": q10.id,
+                    "text": q10.text,
+                    "answers": q10.answers},
+        "filter": filters
+        }
+        response=json.dumps(dict2, indent=4,ensure_ascii=False) 
     return response
 
 
