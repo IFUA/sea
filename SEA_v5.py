@@ -390,11 +390,12 @@ q7=Question(10,"Gehört der Bedarf zu einer bestehenden / neuen Sachanlage? ",[{
 q8=Question(11,"Bitte geben Sie die Anlagennummer an.",[{"id":116,"text":"Bitte angeben"},{"id":117,"text":"Unbekannt"}])
 q9=Question(12,"Handelt es sich bei Ihrem Bedarf um einen Gegenstand, der nicht selbstständig genutzt werden kann? (z.B. Dockingstation)",[{"id":118,"text":"Ja"},{"id":119,"text":"Nein"}])
 #Einkauf/Vertrieb decision tree
-#TODO
-#q10=Question(13,"Handelt es um Transportkosten mit Bezug auf den Vertrieb? (Ausgangsfracht)",[{"id":120,"text":"Ja"},{"id":121,"text":"Nein"}])
-#q11=Question(14,"Handelt es sich um Versandkosten für ...?",[{"id":114,"text":"Fahrzeuge"},{"id":114,"text":"Fahrzeuge"},{"id":114,"text":"Fahrzeuge"},.........{"id":115,"text":"Nein"}])
-
-#it doesnt make sense. decision trees should only be used to decide if invest dummy konto or aufwandskonto should be used
+q10=Question(13,"Handelt es um Transportkosten mit Bezug auf den Vertrieb? (Ausgangsfracht)",[{"id":120,"text":"Ja"},{"id":121,"text":"Nein"}])
+q11=Question(14,"Handelt es sich um Versandkosten für ...?",[{"id":122,"text":"Fahrzeuge"},{"id":123,"text":"Ersatzteile"},{"id":124,"text":"Sonstiges"},{"id":125,"text":"Nein"}])
+q12=Question(15,"Gehören die Transportkosten zu einer bestehenden / neuen Sachanlage?",[{"id":126,"text":"Ja"},{"id":127,"text":"Nein"}])
+q13=Question(16,"Bitte geben Sie die Anlagennummer an.",[{"id":128,"text":"Bitte angeben"},{"id":129,"text":"Unbekannt"}])
+q14=Question(17,"Handelt es sich um Logistikkosten eines Serienlieferanten?)",[{"id":130,"text":"Ja"},{"id":131,"text":"Nein"}])
+#TODO: weitere spezifierung ha kell ide
 
 #Answer objects
 #When besoide Amount, Duration, Usage more questions or answers are used, these id-s should be changed as well
@@ -421,6 +422,18 @@ a17=Answer(117,"Unbekannt",next_question=None,question=q8,account_name="Invest-D
 a18=Answer(118,"Ja",next_question=None,question=q9,account_name="Invest-Dummy-Konto")
 a19=Answer(119,"Nein",next_question=None,question=q9,account_name="Aufwandskonto")
 #Einkauf/Vertrieb decision tree
+a20=Answer(120,"Ja",next_question=q12,question=q10,account_name=None)
+a21=Answer(121,"Nein",next_question=q11,question=q10,account_name=None)
+a22=Answer(122,"Fahrezeuge",next_question=None,question=q11,account_name="Specific account")
+a23=Answer(123,"Ersatzteile",next_question=None,question=q11,account_name="Specific account")
+a24=Answer(124,"Sonstiges",next_question=None,question=q11,account_name="Specific account")
+a25=Answer(125,"Nein",next_question=None,question=q11,account_name="Specific account")
+a26=Answer(126,"Ja",next_question=q13,question=q12,account_name=None)
+a27=Answer(127,"Nein",next_question=q14,question=q12,account_name=None)
+a28=Answer(128,"Bitte angeben",next_question=None,question=q13,account_name="Invest-Dummy-Konto")
+a29=Answer(129,"Unbekannt",next_question=None,question=q13,account_name="Invest-Dummy-Konto")
+a30=Answer(130,"Ja",next_question=None,question=q14,account_name="Specific account")
+a31=Answer(131,"Nein",next_question=None,question=q14,account_name="Aufwandskonto")
 
 #Decision tree dictionary
 d_tree={ a1.id:a1,
@@ -441,7 +454,19 @@ d_tree={ a1.id:a1,
          a16.id:a16,
          a17.id:a17,
          a18.id:a18,
-         a19.id:a19
+         a19.id:a19,
+         a20.id:a20,
+         a21.id:a21,
+         a22.id:a22,
+         a23.id:a23,
+         a24.id:a24,
+         a25.id:a25,
+         a26.id:a26,
+         a27.id:a27,
+         a28.id:a28,
+         a29.id:a29,
+         a30.id:a30,
+         a31.id:a31      
          }
 
 #TODO továbbra is felkommentelni
@@ -773,6 +798,48 @@ def questions():
                         "filter": filtero2
                         }
                 response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                
+            elif d_tree[int(content["answer_id"])].account_name=="Specific Account":
+                if d_tree[int(content["answer_id"])].id==122:
+                    dict5={
+                            "sid": content["sid"],
+                            "result_acc": {"name":"Versandkosten Fahrzeuge", "id":691000}, 
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                elif d_tree[int(content["answer_id"])].id==123:
+                    dict5={
+                            "sid": content["sid"],
+                            "result_acc": {"name":"Versandkosten Ersatzteile", "id":691100}, 
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                elif d_tree[int(content["answer_id"])].id==124:
+                    dict5={
+                            "sid": content["sid"],
+                            "result_acc": {"name":"Versandkosten sonstige", "id":691200}, 
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                elif d_tree[int(content["answer_id"])].id==125:
+                    dict5={
+                            "sid": content["sid"],
+                            "result_acc": {"name":"Kundenkulanz Sonderthemen", "id":691210}, 
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                elif d_tree[int(content["answer_id"])].id==130:
+                    dict5={
+                            "sid": content["sid"],
+                            "result_acc": {"name":"Verpackungskosten der Lieferanten", "id":604400}, 
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
             else: # this branch is Aufwandskonto
                 dict5={
                 "sid": content["sid"],
