@@ -5,6 +5,7 @@ import re
 import json
 import os 
 import pandas as pd
+import flask
 from flask import Flask
 from flask import request
 #for the search_text function
@@ -423,7 +424,9 @@ q11=Question(14,"Handelt es sich um Versandkosten für ...?",[{"id":122,"text":"
 q12=Question(15,"Gehören die Transportkosten zu einer bestehenden / neuen Sachanlage?",[{"id":126,"text":"Ja"},{"id":127,"text":"Nein"}])
 q13=Question(16,"Bitte geben Sie die Anlagennummer an.",[{"id":128,"text":"Bitte angeben"},{"id":129,"text":"Unbekannt"}])
 q14=Question(17,"Handelt es sich um Logistikkosten eines Serienlieferanten?)",[{"id":130,"text":"Ja"},{"id":131,"text":"Nein"}])
-#TODO: weitere spezifierung ha kell ide
+q15=Question(18,"Weitere spezifierung:",[{"id":132,"text":"Verpackung und Versand Material im Werk"},{"id":133,"text":"Eingangstransportkosten"},
+                                         {"id":134,"text":"Ungeplante Bezugsnebenkosten"},{"id":135,"text":"Zölle"},
+                                         {"id":136,"text":"See- / Frachtkosten"},{"id":137,"text":"Inboundkosten (WE, Verpackung, Einlagerung, Retouren) des Logistikdienstleisters PLOG"}])
 
 #Answer objects
 #When besoide Amount, Duration, Usage more questions or answers are used, these id-s should be changed as well
@@ -462,6 +465,12 @@ a28=Answer(128,"Bitte angeben",next_question=None,question=q13,account_name="Inv
 a29=Answer(129,"Unbekannt",next_question=None,question=q13,account_name="Invest-Dummy-Konto")
 a30=Answer(130,"Ja",next_question=None,question=q14,account_name="Specific account")
 a31=Answer(131,"Nein",next_question=None,question=q14,account_name="Aufwandskonto")
+a32=Answer(132,"Verpackung und Versand Material im Werk",next_question=None,question=q15,account_name="Specific account")
+a33=Answer(133,"Eingangstransportkosten",next_question=None,question=q15,account_name="Specific account")
+a34=Answer(134,"Ungeplante Bezugsnebenkosten",next_question=None,question=q15,account_name="Specific account")
+a35=Answer(135,"Zölle",next_question=None,question=q15,account_name="Specific account")
+a36=Answer(136,"See- / Frachtkosten",next_question=None,question=q15,account_name="Specific account")
+a37=Answer(137,"Inboundkosten (WE, Verpackung, Einlagerung, Retouren) des Logistikdienstleisters PLOG",next_question=None,question=q15,account_name="Specific account")
 
 #Decision tree dictionary
 d_tree={ a1.id:a1,
@@ -494,7 +503,13 @@ d_tree={ a1.id:a1,
          a28.id:a28,
          a29.id:a29,
          a30.id:a30,
-         a31.id:a31      
+         a31.id:a31,
+         a32.id:a32,
+         a33.id:a33,
+         a34.id:a34,
+         a35.id:a35,
+         a36.id:a36,
+         a37.id:a37
          }
 
 #TODO továbbra is felkommentelni
@@ -838,13 +853,23 @@ def questions():
             response=json.dumps(dict4, indent=4,ensure_ascii=False)
         else:
             if d_tree[int(content["answer_id"])].account_name=="Invest-Dummy-Konto":
-                dict5={
-                        "sid": content["sid"],
-                        "result": {"text":d_tree[int(content["answer_id"])].account_name, "id":999910, "is_asset_number":"no"}, #id of Invest-dummy-Konto
-                        "question": None,
-                        "filter": filtero2
-                        }
-                response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                #there are 2 Asset number questions, when the Account is Invest-Dummy-Konto
+                if d_tree[int(content["answer_id"])].id in [128,116]:
+                    dict5={
+                            "sid": content["sid"],
+                            "result": {"text":d_tree[int(content["answer_id"])].account_name, "id":999910, "is_asset_number":"yes"}, 
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                else:
+                    dict5={
+                            "sid": content["sid"],
+                            "result": {"text":d_tree[int(content["answer_id"])].account_name, "id":999910, "is_asset_number":"no"}, #id of Invest-dummy-Konto
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
                 
             elif d_tree[int(content["answer_id"])].account_name=="Specific account":
                 if d_tree[int(content["answer_id"])].id==122:
@@ -887,6 +912,54 @@ def questions():
                             "filter": filtero2
                             }
                     response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                elif d_tree[int(content["answer_id"])].id==132:
+                    dict5={
+                            "sid": content["sid"],
+                            "result": {"text":"Verpackung und Versand Material im Werk", "id":604000, "is_asset_number":"no"}, 
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                elif d_tree[int(content["answer_id"])].id==133:
+                    dict5={
+                            "sid": content["sid"],
+                            "result": {"text":"Eingangstransportkosten", "id":691300, "is_asset_number":"no"}, 
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                elif d_tree[int(content["answer_id"])].id==134:
+                    dict5={
+                            "sid": content["sid"],
+                            "result": {"text":"Ungeplante Bezugsnebenkosten", "id":691310, "is_asset_number":"no"}, 
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                elif d_tree[int(content["answer_id"])].id==135:
+                    dict5={
+                            "sid": content["sid"],
+                            "result": {"text":"Zölle", "id":691350, "is_asset_number":"no"}, 
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                elif d_tree[int(content["answer_id"])].id==136:
+                    dict5={
+                            "sid": content["sid"],
+                            "result": {"text":"See- / Frachtkosten", "id":6604300, "is_asset_number":"no"}, 
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
+                elif d_tree[int(content["answer_id"])].id==137:
+                    dict5={
+                            "sid": content["sid"],
+                            "result": {"text":"Inboundkosten (WE, Verpackung, Einlagerung, Retouren) des Logistikdienstleisters PLOG", "id":604310, "is_asset_number":"no"}, 
+                            "question": None,
+                            "filter": filtero2
+                            }
+                    response=json.dumps(dict5, indent=4,ensure_ascii=False)
             else: # this branch is Aufwandskonto
                 dict5={
                 "sid": content["sid"],
@@ -897,6 +970,23 @@ def questions():
                 response=json.dumps(dict5, indent=4,ensure_ascii=False)
 
     return response
+
+@app.route('/api/asset', methods=['POST'])
+
+def asset():
+    """ Requires this request json: {
+        "sid":"GUID",
+        "asset_number": "123456",
+        "filter":{
+            "search_text": "tasche",
+            ...}} """ 
+    
+    #content = request.get_json()
+    response = flask.Response()
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
+    
+
     
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
