@@ -464,7 +464,7 @@ a27=Answer(127,"Nein",next_question=q14,question=q12,account_name=None)
 a28=Answer(128,"Bitte angeben",next_question=None,question=q13,account_name="Invest-Dummy-Konto")
 a29=Answer(129,"Unbekannt",next_question=None,question=q13,account_name="Invest-Dummy-Konto")
 a30=Answer(130,"Ja",next_question=None,question=q14,account_name="Specific account")
-a31=Answer(131,"Nein",next_question=None,question=q14,account_name="Aufwandskonto")
+a31=Answer(131,"Nein",next_question=q15,question=q14,account_name="Aufwandskonto")
 a32=Answer(132,"Verpackung und Versand Material im Werk",next_question=None,question=q15,account_name="Specific account")
 a33=Answer(133,"Eingangstransportkosten",next_question=None,question=q15,account_name="Specific account")
 a34=Answer(134,"Ungeplante Bezugsnebenkosten",next_question=None,question=q15,account_name="Specific account")
@@ -512,11 +512,9 @@ d_tree={ a1.id:a1,
          a37.id:a37
          }
 
-#TODO továbbra is felkommentelni
-
 #Search function with text search (synonyms, positive-negative keywords), categories,amount,duration,usage
 def search_text(accounts, search_value, category=None, amount=None, duration=None, usage=None): 
-    search_value_list = search_value.split(" ") # adjusted the code based on the Nonetype error - now it works
+    search_value_list = search_value.split(" ")
     results = []
     synonyms = []
 
@@ -528,7 +526,7 @@ def search_text(accounts, search_value, category=None, amount=None, duration=Non
         matches = 0
         negative_matches = 0
 
-        # get_close_values is used to make the search case insensitive and more robust. With different cutoff values the closeness of           the results can be set.
+        # get_close_values is used to make the search case insensitive and more robust. With different cutoff values the closeness of the results can be set.
         for value in search_value_list: 
             if len(get_close_matches(value, account.searchTerms, cutoff=0.8)) > 0: 
                 matches += 1
@@ -559,11 +557,9 @@ def search_text(accounts, search_value, category=None, amount=None, duration=Non
         results = usageSearch(results, usage) # only searching in the results that has been filtered above
     return results
 
-#search_text(accounts=account_list, search_value="stanitzel rotten")[0].desc
-
-# function for 1. post request
+# stage3 logic function for 1. post request
 def stage3(results,content,filters):
-    #stage3
+
     if results[0].stage3_result=="Account ID":
         dict2={ "sid":content["sid"],
         "result": {"text":results[0].desc,"id":results[0].id, "is_asset_number":"no"},
@@ -633,9 +629,9 @@ def stage3(results,content,filters):
         response=json.dumps(dict2, indent=4,ensure_ascii=False) 
     return response
 
-# function for 2. post request
+# stage3 logic function for 2. post request
 def stage3_2(results,content,filters):
-    #stage3
+
     if results[0].stage3_result=="Account ID":
         dict2={ "sid":content["sid"],
         "result": {"text":results[0].desc,"id":results[0].id, "is_asset_number":"no"},
@@ -699,8 +695,6 @@ def stage3_2(results,content,filters):
         response=json.dumps(dict2, indent=4,ensure_ascii=False) 
     return response
 
-
-
 @app.route('/api/search', methods=['POST'])
 
 def search():
@@ -729,11 +723,6 @@ def search():
         response=json.dumps(dict3, indent=4,ensure_ascii=False)
     return response
 
-
-#if __name__ == "__main__":
-#    app.run(host='127.0.0.1', port=5000)
-
-
 @app.route('/api/questions', methods=['POST'])
 
 def questions():
@@ -749,7 +738,7 @@ def questions():
     ##Checking what is already in the filter properties
     #category
     try: 
-        Category=str({v: k for k, v in d_category.items()}[content["filter"]["Category"]]) # inverting dictionary, az id-ja kell
+        Category=str({v: k for k, v in d_category.items()}[content["filter"]["Category"]]) # inverting dictionary, we need the id
     except: 
         Category=None
     #amount
@@ -768,18 +757,19 @@ def questions():
     except: 
         Usage=None
     
-    
-    app.logger.info(str(content["filter"]))
+    #app.logger.info(str(content["filter"]))
     #app.logger.info(content["filter"]["Amount"])
     
+    # Search function, parameters coming from the filter property
     results=search_text(account_list,str(content["filter"]["search_text"]),category=Category,amount=Amount,duration=Duration,usage=Usage)
 
+    #Übergeordnete categories branch
     if content["answer_id"] in ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12']:
         results=categorySearch(account_list,str(content["answer_id"]))
         dict1={
         "sid": content["sid"],
         "result": None,
-        "question": create_answers(results)[questionLogic(results)[0]], # get the json of the first question from the d_question dict
+        "question": create_answers(results)[questionLogic(results)[0]],
         "filter": {
         "search_text": content["filter"]["search_text"],
         "Category": d_category[content["answer_id"]] 
@@ -787,11 +777,12 @@ def questions():
         }    
         response=json.dumps(dict1, indent=4,ensure_ascii=False)
 
+    #stage2 logic
     elif content["answer_id"] != None and int(content["answer_id"])<=98: 
 
-        str_question=d_answers[int(content["answer_id"])]["question"]# melyik kérdésre kaptam választ
+        str_question=d_answers[int(content["answer_id"])]["question"] #to which question I have the answer
                    
-        #szűrés az érkezett válaszra - ez nincs benne a fenti search_text fv-ben, ott csak azok legyenek amik már a filter propertieben szerepelnek
+        #filtering based on the answer, it is not in the search_text function, because it only works with the filter property
         if str_question == "Amount":
             results = amountSearch(results, str(d_answers[int(content["answer_id"])]["id"])) 
         elif (str_question == "Duration") : 
@@ -799,32 +790,25 @@ def questions():
         elif str_question == "Usage":
             results = usageSearch(results, str(d_answers[int(content["answer_id"])]["id"]))  
 
-        l_question_logic=questionLogic(results) # kérdéssorrend
-        question_nr=l_question_logic.index(str_question) #  amelyik kérdésre a választ kaptam annak mi az indexe
+        l_question_logic=questionLogic(results) # question order
+        question_nr=l_question_logic.index(str_question) #  the index of the question that I have the answer
 
-        #Adding to the existing filter, the new question-answer pair - TODO: work on nicer formating - encoding!!
+        #Adding to the existing filter, the new question-answer pair
         filters=str(content["filter"]).strip("}")+",'"+str(str_question)+"':'"+str(d_answers[int(content["answer_id"])]["text"])+"'}"
-
         filters=filters.replace("'","\"")
-        
-        print(filters)
         filtero=json.loads(filters)
-        print(filtero)
-        # ha 1 results van, ha több results van
-        if len(results)==1: # if there is 1 result->stage3
-            
+
+        # if there is 1 result-> stage3 logic
+        if len(results)==1: 
             response=stage3_2(results,content,filtero)
         
-        elif len(results)>1:
-            #ha null a kövi kérdés vagy megvolt a 3 kérdés, akkor itt ugrik át a decision tree-re
+        elif len(results)>1: # if there is >1 results
+            #if the next question is null or we already asked the 3 questions, then decision tree
             if question_nr==3 or l_question_logic[question_nr+1]=="Null":
-
-                print("After usage question, there will be only one result, this branch shouldnt exist")
-
                 response="After usage question, there will be only one result, this branch shouldnt exist"
+                
             else:
                 next_question=create_answers(results)[l_question_logic[question_nr+1]] # next question 
-
                 dict3={
                         "sid": content["sid"],
                         "result": None,
@@ -836,7 +820,7 @@ def questions():
             response="Error: 0 in results!"
 
     elif int(content["answer_id"])>100: #Decision tree
-
+    
         filters2=str(content["filter"]).strip("}")+",'"+d_tree[int(content["answer_id"])].question.text+"':'"+str(d_tree[int(content["answer_id"])].text)+"'}"
         filters2=filters2.replace("'","\"")
         filtero2=json.loads(filters2)
@@ -986,11 +970,8 @@ def asset():
     response.headers["Access-Control-Allow-Origin"] = "*"
     return response
     
-
-    
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-
 
 #TODO: 
 # a questionLogic fv-ben a defaultba ne legyen olyan, amit nem lehet kérdezni! meg kell nézni, hogy milyen question logicok vannak és ami abba van, azt jelenítsae csak meg.
