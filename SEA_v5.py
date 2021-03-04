@@ -551,7 +551,7 @@ def stage3(results,content,filters):
     #stage3
     if results[0].stage3_result=="Account ID":
         dict2={ "sid":content["sid"],
-        "result_acc": {"name":results[0].desc,"id":results[0].id},
+        "result": {"text":results[0].desc,"id":results[0].id, "is_asset_number":"no"},
         "cat_list": None,
         "question": None,
         "filter": filters
@@ -560,7 +560,7 @@ def stage3(results,content,filters):
         
     if results[0].stage3_result=="Dummy":
         dict2={ "sid":content["sid"],
-        "result_acc": {"name":"Invest-Dummy-Konto", "id":999910},
+        "result": {"text":"Invest-Dummy-Konto", "id":999910, "is_asset_number":"no"},
         "cat_list": None,
         "question": None,
         "filter": filters
@@ -570,7 +570,7 @@ def stage3(results,content,filters):
     elif results[0].stage3_result=="Entscheidungsbaum (Instandhaltung)":
         dict2={
         "sid": content["sid"],
-        "result_acc": None,
+        "result": None,
         "cat_list": None,
         "question": {
                     "id": q1.id,
@@ -582,7 +582,7 @@ def stage3(results,content,filters):
     elif results[0].stage3_result=="Entscheidungsbaum (WVDV)":
         dict2={
         "sid": content["sid"],
-        "result_acc": None,
+        "result": None,
         "cat_list": None,
         "question": {
                     "id": q4.id,
@@ -594,7 +594,7 @@ def stage3(results,content,filters):
     elif results[0].stage3_result=="Entscheidungsbaum (Sachgesamtheit)":
         dict2={
         "sid": content["sid"],
-        "result_acc": None,
+        "result": None,
         "cat_list": None,
         "question": {
                     "id": q7.id,
@@ -607,7 +607,7 @@ def stage3(results,content,filters):
     elif results[0].stage3_result=="Entscheidungsbaum (Einkauf/Vertrieb)":
         dict2={
         "sid": content["sid"],
-        "result_acc": None,
+        "result": None,
         "cat_list": None,
         "question": {
                     "id": q10.id,
@@ -623,7 +623,7 @@ def stage3_2(results,content,filters):
     #stage3
     if results[0].stage3_result=="Account ID":
         dict2={ "sid":content["sid"],
-        "result_acc": {"name":results[0].desc,"id":results[0].id},
+        "result": {"text":results[0].desc,"id":results[0].id, "is_asset_number":"no"},
         "question": None,
         "filter": filters
         }
@@ -631,7 +631,7 @@ def stage3_2(results,content,filters):
         
     elif results[0].stage3_result=="Dummy":
         dict2={ "sid":content["sid"],
-        "result_acc": {"name":"Invest-Dummy-Konto", "id":999910},
+        "result": {"text":"Invest-Dummy-Konto", "id":999910, "is_asset_number":"no"},
         "question": None,
         "filter": filters
         }
@@ -640,7 +640,7 @@ def stage3_2(results,content,filters):
     elif results[0].stage3_result=="Entscheidungsbaum (Instandhaltung)":
         dict2={
         "sid": content["sid"],
-        "result_acc": None,
+        "result": None,
         "question": {
                     "id": q1.id,
                     "text": q1.text,
@@ -651,7 +651,7 @@ def stage3_2(results,content,filters):
     elif results[0].stage3_result=="Entscheidungsbaum (WVDV)":
         dict2={
         "sid": content["sid"],
-        "result_acc": None,
+        "result": None,
         "question": {
                     "id": q4.id,
                     "text": q4.text,
@@ -662,7 +662,7 @@ def stage3_2(results,content,filters):
     elif results[0].stage3_result=="Entscheidungsbaum (Sachgesamtheit)":
         dict2={
         "sid": content["sid"],
-        "result_acc": None,
+        "result": None,
         "question": {
                     "id": q7.id,
                     "text": q7.text,
@@ -674,7 +674,7 @@ def stage3_2(results,content,filters):
     elif results[0].stage3_result=="Entscheidungsbaum (Einkauf/Vertrieb)":
         dict2={
         "sid": content["sid"],
-        "result_acc": None,
+        "result": None,
         "question": {
                     "id": q10.id,
                     "text": q10.text,
@@ -696,7 +696,7 @@ def search():
     #3 options from here: 0 result, 1 result, several result
     if len(results)==0:
         dict1={ "sid":content["sid"],
-                "result_acc": None,
+                "result": None,
                 "question": d_cats,
                 "filter": filters
                 }
@@ -707,7 +707,7 @@ def search():
     elif len(results)>1:
 
         dict3={ "sid":content["sid"],
-                "result_acc": None,
+                "result": None,
                 "question": create_answers(results)[questionLogic(results)[0]], # get the json of the first question from the d_question dict
                 "filter": filters
                 }
@@ -763,7 +763,7 @@ def questions():
         results=categorySearch(account_list,str(content["answer_id"]))
         dict1={
         "sid": content["sid"],
-        "result_acc": None,
+        "result": None,
         "question": create_answers(results)[questionLogic(results)[0]], # get the json of the first question from the d_question dict
         "filter": {
         "search_text": content["filter"]["search_text"],
@@ -812,7 +812,7 @@ def questions():
 
                 dict3={
                         "sid": content["sid"],
-                        "result_acc": None,
+                        "result": None,
                         "question": next_question,
                         "filter": filtero
                         }
@@ -828,7 +828,7 @@ def questions():
         if d_tree[int(content["answer_id"])].next_question is not None:
             dict4={
                     "sid": content["sid"],
-                    "result_acc": None,
+                    "result": None,
                     "question": {
                                 "id": d_tree[int(content["answer_id"])].next_question.id,
                                 "text": d_tree[int(content["answer_id"])].next_question.text,                            
@@ -840,7 +840,7 @@ def questions():
             if d_tree[int(content["answer_id"])].account_name=="Invest-Dummy-Konto":
                 dict5={
                         "sid": content["sid"],
-                        "result_acc": {"name":d_tree[int(content["answer_id"])].account_name, "id":999910}, #id of Invest-dummy-Konto
+                        "result": {"text":d_tree[int(content["answer_id"])].account_name, "id":999910, "is_asset_number":"no"}, #id of Invest-dummy-Konto
                         "question": None,
                         "filter": filtero2
                         }
@@ -850,7 +850,7 @@ def questions():
                 if d_tree[int(content["answer_id"])].id==122:
                     dict5={
                             "sid": content["sid"],
-                            "result_acc": {"name":"Versandkosten Fahrzeuge", "id":691000}, 
+                            "result": {"text":"Versandkosten Fahrzeuge", "id":691000, "is_asset_number":"no"}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -858,7 +858,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==123:
                     dict5={
                             "sid": content["sid"],
-                            "result_acc": {"name":"Versandkosten Ersatzteile", "id":691100}, 
+                            "result": {"text":"Versandkosten Ersatzteile", "id":691100, "is_asset_number":"no"}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -866,7 +866,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==124:
                     dict5={
                             "sid": content["sid"],
-                            "result_acc": {"name":"Versandkosten sonstige", "id":691200}, 
+                            "result": {"text":"Versandkosten sonstige", "id":691200, "is_asset_number":"no"}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -874,7 +874,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==125:
                     dict5={
                             "sid": content["sid"],
-                            "result_acc": {"name":"Kundenkulanz Sonderthemen", "id":691210}, 
+                            "result": {"text":"Kundenkulanz Sonderthemen", "id":691210, "is_asset_number":"no"}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -882,7 +882,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==130:
                     dict5={
                             "sid": content["sid"],
-                            "result_acc": {"name":"Verpackungskosten der Lieferanten", "id":604400}, 
+                            "result": {"text":"Verpackungskosten der Lieferanten", "id":604400, "is_asset_number":"no"}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -890,7 +890,7 @@ def questions():
             else: # this branch is Aufwandskonto
                 dict5={
                 "sid": content["sid"],
-                "result_acc": {"name":results[0].desc,"id":results[0].id},
+                "result": {"text":results[0].desc,"id":results[0].id, "is_asset_number":"no"},
                 "question": None,
                 "filter": filtero2
                 }
