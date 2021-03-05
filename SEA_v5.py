@@ -371,7 +371,7 @@ def create_answers(results):
     d_questions={
     "Amount": {
         "id": 1,
-        "text": "Betrag2:",
+        "text": "Betrag:",
         "answers": l_answers_amount
     },
     "Duration": {
