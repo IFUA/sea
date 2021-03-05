@@ -562,7 +562,7 @@ def stage3(results,content,filters):
 
     if results[0].stage3_result=="Account ID":
         dict2={ "sid":content["sid"],
-        "result": {"text":results[0].desc,"id":results[0].id, "is_asset_number":"no"},
+        "result": {"text":results[0].desc,"id":results[0].id, "is_asset_number":False},
         "cat_list": None,
         "question": None,
         "filter": filters
@@ -571,7 +571,7 @@ def stage3(results,content,filters):
         
     if results[0].stage3_result=="Dummy":
         dict2={ "sid":content["sid"],
-        "result": {"text":"Invest-Dummy-Konto", "id":999910, "is_asset_number":"no"},
+        "result": {"text":"Invest-Dummy-Konto", "id":999910, "is_asset_number":False},
         "cat_list": None,
         "question": None,
         "filter": filters
@@ -634,7 +634,7 @@ def stage3_2(results,content,filters):
 
     if results[0].stage3_result=="Account ID":
         dict2={ "sid":content["sid"],
-        "result": {"text":results[0].desc,"id":results[0].id, "is_asset_number":"no"},
+        "result": {"text":results[0].desc,"id":results[0].id, "is_asset_number":False},
         "question": None,
         "filter": filters
         }
@@ -642,7 +642,7 @@ def stage3_2(results,content,filters):
         
     elif results[0].stage3_result=="Dummy":
         dict2={ "sid":content["sid"],
-        "result": {"text":"Invest-Dummy-Konto", "id":999910, "is_asset_number":"no"},
+        "result": {"text":"Invest-Dummy-Konto", "id":999910, "is_asset_number":False},
         "question": None,
         "filter": filters
         }
@@ -841,7 +841,7 @@ def questions():
                 if d_tree[int(content["answer_id"])].id in [128,116]:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":d_tree[int(content["answer_id"])].account_name, "id":999910, "is_asset_number":"yes"}, 
+                            "result": {"text":d_tree[int(content["answer_id"])].account_name, "id":999910, "is_asset_number":True}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -849,7 +849,7 @@ def questions():
                 else:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":d_tree[int(content["answer_id"])].account_name, "id":999910, "is_asset_number":"no"}, #id of Invest-dummy-Konto
+                            "result": {"text":d_tree[int(content["answer_id"])].account_name, "id":999910, "is_asset_number":False}, #id of Invest-dummy-Konto
                             "question": None,
                             "filter": filtero2
                             }
@@ -859,7 +859,7 @@ def questions():
                 if d_tree[int(content["answer_id"])].id==122:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":"Versandkosten Fahrzeuge", "id":691000, "is_asset_number":"no"}, 
+                            "result": {"text":"Versandkosten Fahrzeuge", "id":691000, "is_asset_number":False}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -867,7 +867,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==123:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":"Versandkosten Ersatzteile", "id":691100, "is_asset_number":"no"}, 
+                            "result": {"text":"Versandkosten Ersatzteile", "id":691100, "is_asset_number":False}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -875,7 +875,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==124:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":"Versandkosten sonstige", "id":691200, "is_asset_number":"no"}, 
+                            "result": {"text":"Versandkosten sonstige", "id":691200, "is_asset_number":False}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -883,7 +883,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==125:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":"Kundenkulanz Sonderthemen", "id":691210, "is_asset_number":"no"}, 
+                            "result": {"text":"Kundenkulanz Sonderthemen", "id":691210, "is_asset_number":False}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -891,7 +891,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==130:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":"Verpackungskosten der Lieferanten", "id":604400, "is_asset_number":"no"}, 
+                            "result": {"text":"Verpackungskosten der Lieferanten", "id":604400, "is_asset_number":False}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -899,7 +899,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==132:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":"Verpackung und Versand Material im Werk", "id":604000, "is_asset_number":"no"}, 
+                            "result": {"text":"Verpackung und Versand Material im Werk", "id":604000, "is_asset_number":False}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -907,7 +907,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==133:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":"Eingangstransportkosten", "id":691300, "is_asset_number":"no"}, 
+                            "result": {"text":"Eingangstransportkosten", "id":691300, "is_asset_number":False}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -915,7 +915,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==134:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":"Ungeplante Bezugsnebenkosten", "id":691310, "is_asset_number":"no"}, 
+                            "result": {"text":"Ungeplante Bezugsnebenkosten", "id":691310, "is_asset_number":False}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -923,7 +923,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==135:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":"Zölle", "id":691350, "is_asset_number":"no"}, 
+                            "result": {"text":"Zölle", "id":691350, "is_asset_number":False}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -931,7 +931,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==136:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":"See- / Frachtkosten", "id":6604300, "is_asset_number":"no"}, 
+                            "result": {"text":"See- / Frachtkosten", "id":6604300, "is_asset_number":False}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -939,7 +939,7 @@ def questions():
                 elif d_tree[int(content["answer_id"])].id==137:
                     dict5={
                             "sid": content["sid"],
-                            "result": {"text":"Inboundkosten (WE, Verpackung, Einlagerung, Retouren) des Logistikdienstleisters PLOG", "id":604310, "is_asset_number":"no"}, 
+                            "result": {"text":"Inboundkosten (WE, Verpackung, Einlagerung, Retouren) des Logistikdienstleisters PLOG", "id":604310, "is_asset_number":False}, 
                             "question": None,
                             "filter": filtero2
                             }
@@ -947,7 +947,7 @@ def questions():
             else: # this branch is Aufwandskonto
                 dict5={
                 "sid": content["sid"],
-                "result": {"text":results[0].desc,"id":results[0].id, "is_asset_number":"no"},
+                "result": {"text":results[0].desc,"id":results[0].id, "is_asset_number":False},
                 "question": None,
                 "filter": filtero2
                 }
@@ -960,7 +960,7 @@ def questions():
 def asset():
     """ Requires this request json: {
         "sid":"GUID",
-        "asset_number": "123456",
+        "text": "123456",
         "filter":{
             "search_text": "tasche",
             ...}} """ 
