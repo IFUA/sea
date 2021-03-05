@@ -371,7 +371,7 @@ def create_answers(results):
     d_questions={
     "Amount": {
         "id": 1,
-        "text": "Betrag:",
+        "text": "Betrag2:",
         "answers": l_answers_amount
     },
     "Duration": {
@@ -977,7 +977,7 @@ if __name__ == "__main__":
 # a questionLogic fv-ben a defaultba ne legyen olyan, amit nem lehet kérdezni! meg kell nézni, hogy milyen question logicok vannak és ami abba van, azt jelenítsae csak meg.
 # lementés egy táblába, 
 
-
+#komment
 
 
 
