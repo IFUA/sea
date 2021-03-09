@@ -215,7 +215,8 @@ d_cats={"id": "c1",
                 "id": "c12",
                 "text": d_category["c12"]
             }
-        ]
+        ],
+        "infobox":None
 }
 
 #All potential answers to stage2 questions
@@ -372,17 +373,20 @@ def create_answers(results):
     "Amount": {
         "id": 1,
         "text": "Betrag:",
-        "answers": l_answers_amount
+        "answers": l_answers_amount,
+        "infobox":"Bitte Betrag in NETTO EUR pro Einheit (bspw. sonstige Betriebsaufw., Büromaterial) oder pro Person (bspw. bei Bewirtung, Geschenken) angeben. Die Beträge müssen sich auf Positionen in einer Banf, Bestellung oder Angebot beziehen; nicht der Rechnungsbetrag."
     },
     "Duration": {
         "id": 2,
         "text": "Nutzungsdauer:",
-        "answers":l_answers_duration
+        "answers":l_answers_duration,
+        "infobox":"Geben Sie an, über welchen Zeitraum Sie Ihren gewünschten Bedarf voraussichtlich nutzen und er dem Unternehmen zur Verfügung steht."
     },
     "Usage": {
         "id": 3,
         "text": "Verwendungszweck:",
-        "answers": l_answers_usage
+        "answers": l_answers_usage,
+        "infobox":"Wählen Sie für Ihren Bedarf den dazu passenden Verwendungszweck aus. Bsp.:  Bedarf: 'Verschenken von Modellauto' -> Verwendungszweck: 'Empfänger: Mitarbeiter (für Bewirtung & Geschenke)'"
     }
     }
     return d_questions
@@ -391,10 +395,11 @@ def create_answers(results):
 
 #Defining Question and Answer class for the decision trees
 class Question:
-    def __init__(self, id, text, answers):
+    def __init__(self, id, text, answers, infobox):
         self.id = id
         self.text =text
         self.answers = answers
+        self.infobox = infobox
 
 class Answer:
     def __init__(self, id, text, next_question,question,account_name): # account is egy plusz objektum
@@ -407,26 +412,26 @@ class Answer:
 #Question objects
 #When beside Amount, Duration, Usage more questions or answers are used, these id-s should be changed as well
 #Instandhaltung decision tree
-q1=Question(4,"Handelt es sich um eine reine Instandhaltungsmaßnahme?",[{"id":101,"text":"Ja"},{"id":102,"text":"Nein"}])
-q2=Question(5,"Findet ein Austausch von bereits vorhandenen Gegenständen statt?",[{"id":103,"text":"Ja"},{"id":104,"text":"Nein"}])
-q3=Question(6,"Wird durch die Maßnahme ein über dem einst vorhandenen Standard liegender Zustand erreicht (Standardhebung)?",[{"id":105,"text":"Ja"},{"id":106,"text":"Nein"}])
+q1=Question(4,"Handelt es sich um eine reine Instandhaltungsmaßnahme?",[{"id":101,"text":"Ja"},{"id":102,"text":"Nein"}], "Die Instandhaltung ist die Gesamtheit der Maßnahmen zur Bewahrung des Soll-Zustandes sowie zur Festlegung und Beurteilung des Ist-Zustandes. Solche Maßnahmen sind: (1) Inspektion (Feststellung und Beurteilung des Ist-Zustandes), (2) Wartung / Reparatur (Bewahrung des Soll-Zustandes), (3) Instandsetzung (Wiederherstellung des Soll-Zustandes).")
+q2=Question(5,"Findet ein Austausch von bereits vorhandenen Gegenständen statt?",[{"id":103,"text":"Ja"},{"id":104,"text":"Nein"}], "Beispiele für den Austausch von bereits vorhandenen Gegenständen: (1) Austausch eines zerbrochenen Fensters am Firmengebäude, (2) Ölwechsel bei einem Kran, (3) Wartung einer Fertigungsmaschine, (4) Überwachung einer Produktionsanlage durch Messtechnik, (5) Reparatur der Sanitäranlagen im Firmengebäude")
+q3=Question(6,"Wird durch die Maßnahme ein über dem einst vorhandenen Standard liegender Zustand erreicht (Standardhebung)?",[{"id":105,"text":"Ja"},{"id":106,"text":"Nein"}], "Indizien für die Standarderhebung: (1) ein Gebäude wird in zeitl. Nähe zum Erwerb im Ganzen und von Grund auf modernisiert, (2) hohe Aufw. für die Sanierung der zentralen Ausstattungsmerk. werden getätigt, (3) aufgrund dieser Baumaßnahme wird der Mietzins erheblich erhöht.")
 #Werkvertrag/Dienstvertrag (WVDV) decision tree
-q4=Question(7,"Handelt es sich um einen materiellen oder immateriellen Bedarf?",[{"id":107,"text":"Materiell"},{"id":108,"text":"Immateriell"}])
-q5=Question(8,"Ist ein konkretes Arbeitsergebnis Gegenstand des Vertrags?",[{"id":109,"text":"Ja"},{"id":110,"text":"Nein"},{"id":111,"text":"Nicht bekannt"}])
-q6=Question(9,"Können alle Fragen in der grauen Box (Z. D14) bejaht werden? (Hersteller)",[{"id":112,"text":"Ja"},{"id":113,"text":"Nein"}])
+q4=Question(7,"Handelt es sich um einen materiellen oder immateriellen Bedarf?",[{"id":107,"text":"Materiell"},{"id":108,"text":"Immateriell"}], "Materiell: Sache oder ein Gegenstand, der körperlich existiert (z.B. Gabelstapler, Schrauber). Immateriell: nicht körperlich greifbar (z.B. Dienstleistung, Lizenz)")
+q5=Question(8,"Ist ein konkretes Arbeitsergebnis Gegenstand des Vertrags?",[{"id":109,"text":"Ja"},{"id":110,"text":"Nein"},{"id":111,"text":"Nicht bekannt"}],"Ein konkretes Arbeitsergebnis liegt vor, wenn die Verpflichtung zur Herstellung eines Werks / eines Ergebnisses (z.B. Reparaturvertrag, Erstellung von Gutachten) erfüllt ist.")
+q6=Question(9,"Können alle Fragen in der Infobox bejaht werden?",[{"id":112,"text":"Ja"},{"id":113,"text":"Nein"}], "Das Unternehmen... (1) ...verfügt über fundiertes Know How (2) ...definiert Meilensteine (3) ...trägt/stellt die Projektverantwortung /-leiter (4) ...übernimmt Vorgaben und Überwachung (5) ...trägt die wesentlichen Chancen und Risiken (6) ...kann den Ausgang der Entwicklung beeinflussen (7) ...trägt das Produktrisiko")
 #Sachgesamtheit / Aktivierung decision tree
-q7=Question(10,"Gehört der Bedarf zu einer bestehenden / neuen Sachanlage? ",[{"id":114,"text":"Ja"},{"id":115,"text":"Nein"}])
-q8=Question(11,"Bitte geben Sie die Anlagennummer an.",[{"id":116,"text":"Bitte angeben"},{"id":117,"text":"Unbekannt"}])
-q9=Question(12,"Handelt es sich bei Ihrem Bedarf um einen Gegenstand, der nicht selbstständig genutzt werden kann? (z.B. Dockingstation)",[{"id":118,"text":"Ja"},{"id":119,"text":"Nein"}])
+q7=Question(10,"Gehört der Bedarf zu einer bestehenden / neuen Sachanlage? ",[{"id":114,"text":"Ja"},{"id":115,"text":"Nein"}], "Sachanlagen sind körperlich und greifbar (materiell), z.B. Laptop, Maschinen, Tisch")
+q8=Question(11,"Bitte geben Sie die Anlagennummer an.",[{"id":116,"text":"Bitte angeben"},{"id":117,"text":"Unbekannt"}], "Geben Sie, falls der Bedarf zu einer bestehenden Anlage gehört, die entsprechende Anlagennummer an.")
+q9=Question(12,"Handelt es sich bei Ihrem Bedarf um einen Gegenstand, der nicht selbstständig genutzt werden kann? (z.B. Dockingstation)",[{"id":118,"text":"Ja"},{"id":119,"text":"Nein"}], "Die selbständige Nutzung eines Gegenstandes setzt voraus, dass sie unabhängig von anderen Wirtschaftsgütern genutzt werden kann, bspw. Drucker.")
 #Einkauf/Vertrieb decision tree
-q10=Question(13,"Handelt es um Transportkosten mit Bezug auf den Vertrieb? (Ausgangsfracht)",[{"id":120,"text":"Ja"},{"id":121,"text":"Nein"}])
-q11=Question(14,"Handelt es sich um Versandkosten für ...?",[{"id":122,"text":"Fahrzeuge"},{"id":123,"text":"Ersatzteile"},{"id":124,"text":"Sonstiges"},{"id":125,"text":"Nein"}])
-q12=Question(15,"Gehören die Transportkosten zu einer bestehenden / neuen Sachanlage?",[{"id":126,"text":"Ja"},{"id":127,"text":"Nein"}])
-q13=Question(16,"Bitte geben Sie die Anlagennummer an.",[{"id":128,"text":"Bitte angeben"},{"id":129,"text":"Unbekannt"}])
-q14=Question(17,"Handelt es sich um Logistikkosten eines Serienlieferanten?)",[{"id":130,"text":"Ja"},{"id":131,"text":"Nein"}])
-q15=Question(18,"Weitere spezifierung:",[{"id":132,"text":"Verpackung und Versand Material im Werk"},{"id":133,"text":"Eingangstransportkosten"},
+q10=Question(13,"Handelt es um Transportkosten mit Bezug auf den Vertrieb? (Ausgangsfracht)",[{"id":120,"text":"Ja"},{"id":121,"text":"Nein"}], "Zu den Transportkosten im Rahmen des Vertriebs gehören Waren, die an den Kunden ausgeliefert werden.")
+q11=Question(14,"Handelt es sich um Versandkosten für ...?",[{"id":122,"text":"Fahrzeuge"},{"id":123,"text":"Ersatzteile"},{"id":124,"text":"Sonstiges"},{"id":125,"text":"Nein"}], None)
+q12=Question(15,"Gehören die Transportkosten zu einer bestehenden / neuen Sachanlage?",[{"id":126,"text":"Ja"},{"id":127,"text":"Nein"}], "Sachanlagen sind körperlich und greifbar (materiell), z.B. Laptop, Maschinen, Tisch")
+q13=Question(16,"Bitte geben Sie die Anlagennummer an.",[{"id":128,"text":"Bitte angeben"},{"id":129,"text":"Unbekannt"}], "Geben Sie, falls der Bedarf zu einer bestehenden Anlage gehört, die entsprechende Anlagennummer an.")
+q14=Question(17,"Handelt es sich um Logistikkosten eines Serienlieferanten?)",[{"id":130,"text":"Ja"},{"id":131,"text":"Nein"}], "Zu den Serienlieferanten gehören bspw. Bosch und Mahle.")
+q15=Question(18,"Weitere Spezifikation:",[{"id":132,"text":"Verpackung und Versand Material im Werk"},{"id":133,"text":"Eingangstransportkosten"},
                                          {"id":134,"text":"Ungeplante Bezugsnebenkosten"},{"id":135,"text":"Zölle"},
-                                         {"id":136,"text":"See- / Frachtkosten"},{"id":137,"text":"Inboundkosten (WE, Verpackung, Einlagerung, Retouren) des Logistikdienstleisters PLOG"}])
+                                         {"id":136,"text":"See- / Frachtkosten"},{"id":137,"text":"Inboundkosten (WE, Verpackung, Einlagerung, Retouren) des Logistikdienstleisters PLOG"}], None)
 
 #Answer objects
 #When besoide Amount, Duration, Usage more questions or answers are used, these id-s should be changed as well
@@ -586,7 +591,8 @@ def stage3(results,content,filters):
         "question": {
                     "id": q1.id,
                     "text": q1.text,
-                    "answers": q1.answers},
+                    "answers": q1.answers,
+                    "infobox":q1.infobox},
         "filter": filters
         }
         response=json.dumps(dict2, indent=4,ensure_ascii=False)  
@@ -598,7 +604,8 @@ def stage3(results,content,filters):
         "question": {
                     "id": q4.id,
                     "text": q4.text,
-                    "answers": q4.answers},
+                    "answers": q4.answers,
+                    "infobox":q4.infobox},
         "filter": filters
         }
         response=json.dumps(dict2, indent=4,ensure_ascii=False) 
@@ -610,7 +617,8 @@ def stage3(results,content,filters):
         "question": {
                     "id": q7.id,
                     "text": q7.text,
-                    "answers": q7.answers},
+                    "answers": q7.answers,
+                    "infobox":q7.infobox},
         "filter": filters
         }
         response=json.dumps(dict2, indent=4,ensure_ascii=False) 
@@ -623,7 +631,8 @@ def stage3(results,content,filters):
         "question": {
                     "id": q10.id,
                     "text": q10.text,
-                    "answers": q10.answers},
+                    "answers": q10.answers,
+                    "infobox":q10.infobox},
         "filter": filters
         }
         response=json.dumps(dict2, indent=4,ensure_ascii=False) 
@@ -655,7 +664,8 @@ def stage3_2(results,content,filters):
         "question": {
                     "id": q1.id,
                     "text": q1.text,
-                    "answers": q1.answers},
+                    "answers": q1.answers,
+                    "infobox":q1.infobox},
         "filter": filters
         }
         response=json.dumps(dict2, indent=4,ensure_ascii=False)  
@@ -666,7 +676,8 @@ def stage3_2(results,content,filters):
         "question": {
                     "id": q4.id,
                     "text": q4.text,
-                    "answers": q4.answers},
+                    "answers": q4.answers,
+                    "infobox":q4.infobox},
         "filter": filters
         }
         response=json.dumps(dict2, indent=4,ensure_ascii=False) 
@@ -677,7 +688,8 @@ def stage3_2(results,content,filters):
         "question": {
                     "id": q7.id,
                     "text": q7.text,
-                    "answers": q7.answers},
+                    "answers": q7.answers,
+                    "infobox":q7.infobox},
         "filter": filters
         }
         response=json.dumps(dict2, indent=4,ensure_ascii=False) 
@@ -689,7 +701,8 @@ def stage3_2(results,content,filters):
         "question": {
                     "id": q10.id,
                     "text": q10.text,
-                    "answers": q10.answers},
+                    "answers": q10.answers,
+                    "infobox":q10.infobox},
         "filter": filters
         }
         response=json.dumps(dict2, indent=4,ensure_ascii=False) 
@@ -831,7 +844,8 @@ def questions():
                     "question": {
                                 "id": d_tree[int(content["answer_id"])].next_question.id,
                                 "text": d_tree[int(content["answer_id"])].next_question.text,                            
-                                "answers": d_tree[int(content["answer_id"])].next_question.answers},
+                                "answers": d_tree[int(content["answer_id"])].next_question.answers,
+                                "infobox": d_tree[int(content["answer_id"])].next_question.infobox},
                     "filter": filtero2
                     }
             response=json.dumps(dict4, indent=4,ensure_ascii=False)
