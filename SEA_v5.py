@@ -165,7 +165,7 @@ d_category=df.set_index('ID').T.to_dict('records')[0]
 
 #Dictionary for übergeordnete categories 
 d_cats={"id": "c1",
-        "text": "Please choose a category:",
+        "text": "Bitte wählen Sie eine Kategorie:",
         "answers": [
             {
                 "id": "c1",
@@ -421,13 +421,13 @@ q5=Question(8,"Ist ein konkretes Arbeitsergebnis Gegenstand des Vertrags?",[{"id
 q6=Question(9,"Können alle Fragen in der Infobox bejaht werden?",[{"id":112,"text":"Ja"},{"id":113,"text":"Nein"}], "Das Unternehmen... (1) ...verfügt über fundiertes Know How (2) ...definiert Meilensteine (3) ...trägt/stellt die Projektverantwortung /-leiter (4) ...übernimmt Vorgaben und Überwachung (5) ...trägt die wesentlichen Chancen und Risiken (6) ...kann den Ausgang der Entwicklung beeinflussen (7) ...trägt das Produktrisiko")
 #Sachgesamtheit / Aktivierung decision tree
 q7=Question(10,"Gehört der Bedarf zu einer bestehenden / neuen Sachanlage? ",[{"id":114,"text":"Ja"},{"id":115,"text":"Nein"}], "Sachanlagen sind körperlich und greifbar (materiell), z.B. Laptop, Maschinen, Tisch")
-q8=Question(11,"Bitte geben Sie die Anlagennummer an.",[{"id":116,"text":"Bitte angeben"},{"id":117,"text":"Unbekannt"}], "Geben Sie, falls der Bedarf zu einer bestehenden Anlage gehört, die entsprechende Anlagennummer an.")
+q8=Question(11,"Ist die Anlagenummer bekannt?",[{"id":116,"text":"Ja"},{"id":117,"text":"Nein"}], "Geben Sie, falls der Bedarf zu einer bestehenden Anlage gehört, die entsprechende Anlagennummer an.")
 q9=Question(12,"Handelt es sich bei Ihrem Bedarf um einen Gegenstand, der nicht selbstständig genutzt werden kann? (z.B. Dockingstation)",[{"id":118,"text":"Ja"},{"id":119,"text":"Nein"}], "Die selbständige Nutzung eines Gegenstandes setzt voraus, dass sie unabhängig von anderen Wirtschaftsgütern genutzt werden kann, bspw. Drucker.")
 #Einkauf/Vertrieb decision tree
 q10=Question(13,"Handelt es um Transportkosten mit Bezug auf den Vertrieb? (Ausgangsfracht)",[{"id":120,"text":"Ja"},{"id":121,"text":"Nein"}], "Zu den Transportkosten im Rahmen des Vertriebs gehören Waren, die an den Kunden ausgeliefert werden.")
 q11=Question(14,"Handelt es sich um Versandkosten für ...?",[{"id":122,"text":"Fahrzeuge"},{"id":123,"text":"Ersatzteile"},{"id":124,"text":"Sonstiges"},{"id":125,"text":"Nein"}], None)
 q12=Question(15,"Gehören die Transportkosten zu einer bestehenden / neuen Sachanlage?",[{"id":126,"text":"Ja"},{"id":127,"text":"Nein"}], "Sachanlagen sind körperlich und greifbar (materiell), z.B. Laptop, Maschinen, Tisch")
-q13=Question(16,"Bitte geben Sie die Anlagennummer an.",[{"id":128,"text":"Bitte angeben"},{"id":129,"text":"Unbekannt"}], "Geben Sie, falls der Bedarf zu einer bestehenden Anlage gehört, die entsprechende Anlagennummer an.")
+q13=Question(16,"Ist die Anlagenummer bekannt?",[{"id":128,"text":"Ja"},{"id":129,"text":"Nein"}], "Geben Sie, falls der Bedarf zu einer bestehenden Anlage gehört, die entsprechende Anlagennummer an.")
 q14=Question(17,"Handelt es sich um Logistikkosten eines Serienlieferanten?)",[{"id":130,"text":"Ja"},{"id":131,"text":"Nein"}], "Zu den Serienlieferanten gehören bspw. Bosch und Mahle.")
 q15=Question(18,"Weitere Spezifikation:",[{"id":132,"text":"Verpackung und Versand Material im Werk"},{"id":133,"text":"Eingangstransportkosten"},
                                          {"id":134,"text":"Ungeplante Bezugsnebenkosten"},{"id":135,"text":"Zölle"},
@@ -453,8 +453,8 @@ a13=Answer(113,"Nein",next_question=None,question=q6,account_name="Invest-Dummy-
 #Sachgesamtheit / Aktivierung decision tree
 a14=Answer(114,"Ja",next_question=q8,question=q7,account_name=None)
 a15=Answer(115,"Nein",next_question=q9,question=q7,account_name=None)
-a16=Answer(116,"Bitte angeben",next_question=None,question=q8,account_name="Invest-Dummy-Konto")
-a17=Answer(117,"Unbekannt",next_question=None,question=q8,account_name="Invest-Dummy-Konto")
+a16=Answer(116,"Ja",next_question=None,question=q8,account_name="Invest-Dummy-Konto")
+a17=Answer(117,"Nein",next_question=None,question=q8,account_name="Invest-Dummy-Konto")
 a18=Answer(118,"Ja",next_question=None,question=q9,account_name="Invest-Dummy-Konto")
 a19=Answer(119,"Nein",next_question=None,question=q9,account_name="Aufwandskonto")
 #Einkauf/Vertrieb decision tree
@@ -466,8 +466,8 @@ a24=Answer(124,"Sonstiges",next_question=None,question=q11,account_name="Specifi
 a25=Answer(125,"Nein",next_question=None,question=q11,account_name="Specific account")
 a26=Answer(126,"Ja",next_question=q13,question=q12,account_name=None)
 a27=Answer(127,"Nein",next_question=q14,question=q12,account_name=None)
-a28=Answer(128,"Bitte angeben",next_question=None,question=q13,account_name="Invest-Dummy-Konto")
-a29=Answer(129,"Unbekannt",next_question=None,question=q13,account_name="Invest-Dummy-Konto")
+a28=Answer(128,"Ja",next_question=None,question=q13,account_name="Invest-Dummy-Konto")
+a29=Answer(129,"Nein",next_question=None,question=q13,account_name="Invest-Dummy-Konto")
 a30=Answer(130,"Ja",next_question=None,question=q14,account_name="Specific account")
 a31=Answer(131,"Nein",next_question=q15,question=q14,account_name="Aufwandskonto")
 a32=Answer(132,"Verpackung und Versand Material im Werk",next_question=None,question=q15,account_name="Specific account")
@@ -727,7 +727,7 @@ def search():
         response=stage3(results,content,filters)
         
     elif len(results)>1:
-
+        print(questionLogic(results))
         dict3={ "sid":content["sid"],
                 "result": None,
                 "question": create_answers(results)[questionLogic(results)[0]], # get the json of the first question from the d_question dict
@@ -770,6 +770,7 @@ def questions():
     except: 
         Usage=None
     
+    
     #app.logger.info(str(content["filter"]))
     #app.logger.info(content["filter"]["Amount"])
     
@@ -794,7 +795,10 @@ def questions():
     elif content["answer_id"] != None and int(content["answer_id"])<=98: 
 
         str_question=d_answers[int(content["answer_id"])]["question"] #to which question I have the answer
-                   
+        l_question_logic=questionLogic(results) # question order
+        question_nr=l_question_logic.index(str_question) #  the index of the question that I have the answer
+        #print(str_question)  
+        #print(str(d_answers[int(content["answer_id"])]["id"]))         
         #filtering based on the answer, it is not in the search_text function, because it only works with the filter property
         if str_question == "Amount":
             results = amountSearch(results, str(d_answers[int(content["answer_id"])]["id"])) 
@@ -802,9 +806,13 @@ def questions():
             results = durationSearch(results, str(d_answers[int(content["answer_id"])]["id"]))
         elif str_question == "Usage":
             results = usageSearch(results, str(d_answers[int(content["answer_id"])]["id"]))  
-
-        l_question_logic=questionLogic(results) # question order
-        question_nr=l_question_logic.index(str_question) #  the index of the question that I have the answer
+        
+        #print(len(results))
+        #print(results)
+        
+        #print(l_question_logic)
+        
+        #print(question_nr)
 
         #Adding to the existing filter, the new question-answer pair
         filters=str(content["filter"]).strip("}")+",'"+str(str_question)+"':'"+str(d_answers[int(content["answer_id"])]["text"])+"'}"
@@ -822,6 +830,8 @@ def questions():
                 
             else:
                 next_question=create_answers(results)[l_question_logic[question_nr+1]] # next question 
+                #print(next_question)
+                #print(l_question_logic[question_nr+1])
                 dict3={
                         "sid": content["sid"],
                         "result": None,
