@@ -13,6 +13,7 @@ from difflib import get_close_matches
 from py_openthesaurus import OpenThesaurusWeb
 open_thesaurus = OpenThesaurusWeb()
 import logging
+import requests
 
 app = Flask(__name__)
 
@@ -368,6 +369,11 @@ def create_answers(results):
             l_answers_usage.pop(i)
             break
     
+    # ordering answer dictionaries:
+        l_answers_amount=sorted(l_answers_amount, key = lambda i: i['id'])
+        l_answers_duration=sorted(l_answers_duration, key = lambda i: i['id'])
+        l_answers_usage=sorted(l_answers_usage, key = lambda i: i['id'])
+    
     # d_questions dictionary with the questions and the potential answers
     d_questions={
     "Amount": {
@@ -516,36 +522,42 @@ d_tree={ a1.id:a1,
          a36.id:a36,
          a37.id:a37
          }
-
-#Search function with text search (synonyms, positive-negative keywords), categories,amount,duration,usage
+#Search function with text search (synonyms, positive-negative keywords), categories, amount, duration, usage
 def search_text(accounts, search_value, category=None, amount=None, duration=None, usage=None): 
     search_value_list = search_value.split(" ")
     results = []
     synonyms = []
-
+ 
     # searching for synonyms at open thesaurus
     for value in search_value_list:
-            synonyms.extend(open_thesaurus.get_synonyms(value)) 
-
+        params = {"q":value, "format":"application/json"}
+        r = requests.get('https://www.openthesaurus.de/synonyme/search', params=params)
+        response = json.loads(r.text)
+        synonyms_each = []
+        for cat in response.get("synsets"):
+            for synonym in cat.get("terms"):
+                synonyms_each.append(synonym.get("term"))
+        synonyms.extend(synonyms_each)
+ 
     for index, account in enumerate(accounts): # the index and enumerate stuff porbably just counts the loop numbers
         matches = 0
         negative_matches = 0
-
+ 
         # get_close_values is used to make the search case insensitive and more robust. With different cutoff values the closeness of the results can be set.
         for value in search_value_list: 
-            if len(get_close_matches(value, account.searchTerms, cutoff=0.8)) > 0: 
+            if len(get_close_matches(value.casefold(), map(str.casefold, account.searchTerms), cutoff=0.8)) > 0: 
                 matches += 1
         # if any synonym of the search term is in the list then we get a match
         for value in search_value_list:
-            if any(item in synonyms for item in account.searchTerms): 
+            if any(item.casefold() in map(str.casefold, synonyms) for item in map(str.casefold, account.searchTerms)):
                 matches += 1
-
+ 
         # if the searched term (robust search) or a synonym is in the negative keyword list then dont append to result
         for value in search_value_list: 
-            if len(get_close_matches(value, account.negativeTerms, cutoff=0.8)) > 0: 
+            if len(get_close_matches(value.casefold(), map(str.casefold, account.negativeTerms), cutoff=0.8)) > 0: 
                 negative_matches += 1
         for value in search_value_list: 
-            if any(item in synonyms for item in account.negativeTerms):
+            if any(item.casefold() in map(str.casefold, synonyms) in synonyms for item in map(str.casefold, account.negativeTerms)):
                 negative_matches += 1
         
         #if at least one found word in keyword list and no negative matches then append to result!         
@@ -561,6 +573,51 @@ def search_text(accounts, search_value, category=None, amount=None, duration=Non
     if(usage != None):
         results = usageSearch(results, usage) # only searching in the results that has been filtered above
     return results
+
+# #Search function with text search (synonyms, positive-negative keywords), categories,amount,duration,usage
+# def search_text(accounts, search_value, category=None, amount=None, duration=None, usage=None): 
+#     search_value_list = search_value.split(" ")
+#     results = []
+#     synonyms = []
+
+#     # searching for synonyms at open thesaurus
+#     for value in search_value_list:
+#             synonyms.extend(open_thesaurus.get_synonyms(value)) 
+
+#     for index, account in enumerate(accounts): # the index and enumerate stuff porbably just counts the loop numbers
+#         matches = 0
+#         negative_matches = 0
+
+#         # get_close_values is used to make the search case insensitive and more robust. With different cutoff values the closeness of the results can be set.
+#         for value in search_value_list: 
+#             if len(get_close_matches(value, account.searchTerms, cutoff=0.8)) > 0: 
+#                 matches += 1
+#         # if any synonym of the search term is in the list then we get a match
+#         for value in search_value_list:
+#             if any(item in synonyms for item in account.searchTerms): 
+#                 matches += 1
+
+#         # if the searched term (robust search) or a synonym is in the negative keyword list then dont append to result
+#         for value in search_value_list: 
+#             if len(get_close_matches(value, account.negativeTerms, cutoff=0.8)) > 0: 
+#                 negative_matches += 1
+#         for value in search_value_list: 
+#             if any(item in synonyms for item in account.negativeTerms):
+#                 negative_matches += 1
+        
+#         #if at least one found word in keyword list and no negative matches then append to result!         
+#         if matches > 0 and negative_matches==0: 
+#             results.append(account)
+        
+#     if(category != None):
+#         results = categorySearch(accounts, category) # when we have category, then we have to search from the given results and not from the text filtered accounts, becouse it is empty
+#     if(amount != None):
+#         results = amountSearch(results, amount) # using the predefined functions for amount, duration and usage search; only searching in the results that has been filtered above
+#     if(duration != None):
+#         results = durationSearch(results, duration) # only searching in the results that has been filtered above
+#     if(usage != None):
+#         results = usageSearch(results, usage) # only searching in the results that has been filtered above
+#     return results
 
 # stage3 logic function for 1. post request
 def stage3(results,content,filters):
