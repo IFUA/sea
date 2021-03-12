@@ -524,7 +524,7 @@ d_tree={ a1.id:a1,
          }
 #Search function with text search (synonyms, positive-negative keywords), categories, amount, duration, usage
 def search_text(accounts, search_value, category=None, amount=None, duration=None, usage=None): 
-    search_value_list = search_value.split(" ")
+    search_value_list = search_value.strip().split(" ")
     results = []
     synonyms = []
  
