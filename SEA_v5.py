@@ -527,42 +527,46 @@ def search_text(accounts, search_value, category=None, amount=None, duration=Non
     search_value_list = search_value.strip().split(" ")
     results = []
     synonyms = []
- 
-    # searching for synonyms at open thesaurus
-    for value in search_value_list:
-        params = {"q":value, "format":"application/json"}
-        r = requests.get('https://www.openthesaurus.de/synonyme/search', params=params)
-        response = json.loads(r.text)
-        synonyms_each = []
-        for cat in response.get("synsets"):
-            for synonym in cat.get("terms"):
-                synonyms_each.append(synonym.get("term"))
-        synonyms.extend(synonyms_each)
- 
-    for index, account in enumerate(accounts): # the index and enumerate stuff porbably just counts the loop numbers
-        matches = 0
-        negative_matches = 0
- 
-        # get_close_values is used to make the search case insensitive and more robust. With different cutoff values the closeness of the results can be set.
-        for value in search_value_list: 
-            if len(get_close_matches(value.casefold(), map(str.casefold, account.searchTerms), cutoff=0.84)) > 0: 
-                matches += 1
-        # if any synonym of the search term is in the list then we get a match
+    
+    #Dealing with no text in textbox
+    if search_value_list[0]=="": # if there is now text, it shouldnt find anything
+        results=[]
+    else:
+        # searching for synonyms at open thesaurus
         for value in search_value_list:
-            if any(item.casefold() in map(str.casefold, synonyms) for item in map(str.casefold, account.searchTerms)):
-                matches += 1
- 
-        # if the searched term (robust search) or a synonym is in the negative keyword list then dont append to result
-        for value in search_value_list: 
-            if len(get_close_matches(value.casefold(), map(str.casefold, account.negativeTerms), cutoff=0.84)) > 0: 
-                negative_matches += 1
-        for value in search_value_list: 
-            if any(item.casefold() in map(str.casefold, synonyms) in synonyms for item in map(str.casefold, account.negativeTerms)):
-                negative_matches += 1
-        
-        #if at least one found word in keyword list and no negative matches then append to result!         
-        if matches > 0 and negative_matches==0: 
-            results.append(account)
+            params = {"q":value, "format":"application/json"}
+            r = requests.get('https://www.openthesaurus.de/synonyme/search', params=params)
+            response = json.loads(r.text)
+            synonyms_each = []
+            for cat in response.get("synsets"):
+                for synonym in cat.get("terms"):
+                    synonyms_each.append(synonym.get("term"))
+            synonyms.extend(synonyms_each)
+     
+        for index, account in enumerate(accounts): # the index and enumerate stuff porbably just counts the loop numbers
+            matches = 0
+            negative_matches = 0
+     
+            # get_close_values is used to make the search case insensitive and more robust. With different cutoff values the closeness of the results can be set.
+            for value in search_value_list: 
+                if len(get_close_matches(value.casefold(), map(str.casefold, account.searchTerms), cutoff=0.84)) > 0: 
+                    matches += 1
+            # if any synonym of the search term is in the list then we get a match
+            for value in search_value_list:
+                if any(item.casefold() in map(str.casefold, synonyms) for item in map(str.casefold, account.searchTerms)):
+                    matches += 1
+     
+            # if the searched term (robust search) or a synonym is in the negative keyword list then dont append to result
+            for value in search_value_list: 
+                if len(get_close_matches(value.casefold(), map(str.casefold, account.negativeTerms), cutoff=0.84)) > 0: 
+                    negative_matches += 1
+            for value in search_value_list: 
+                if any(item.casefold() in map(str.casefold, synonyms) in synonyms for item in map(str.casefold, account.negativeTerms)):
+                    negative_matches += 1
+            
+            #if at least one found word in keyword list and no negative matches then append to result!         
+            if matches > 0 and negative_matches==0: 
+                results.append(account)
         
     if(category != None):
         results = categorySearch(accounts, category) # when we have category, then we have to search from the given results and not from the text filtered accounts, becouse it is empty
@@ -779,12 +783,12 @@ def search():
                 "question": d_cats,
                 "filter": filters
                 }
-        response=json.dumps(dict1, indent=4)
+        response=json.dumps(dict1, indent=4,ensure_ascii=False)
     elif len(results)==1:
         response=stage3(results,content,filters)
         
     elif len(results)>1:
-        print(questionLogic(results))
+        #print(questionLogic(results))
         dict3={ "sid":content["sid"],
                 "result": None,
                 "question": create_answers(results)[questionLogic(results)[0]], # get the json of the first question from the d_question dict
