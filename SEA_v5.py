@@ -545,7 +545,7 @@ def search_text(accounts, search_value, category=None, amount=None, duration=Non
  
         # get_close_values is used to make the search case insensitive and more robust. With different cutoff values the closeness of the results can be set.
         for value in search_value_list: 
-            if len(get_close_matches(value.casefold(), map(str.casefold, account.searchTerms), cutoff=0.8)) > 0: 
+            if len(get_close_matches(value.casefold(), map(str.casefold, account.searchTerms), cutoff=0.84)) > 0: 
                 matches += 1
         # if any synonym of the search term is in the list then we get a match
         for value in search_value_list:
@@ -554,7 +554,7 @@ def search_text(accounts, search_value, category=None, amount=None, duration=Non
  
         # if the searched term (robust search) or a synonym is in the negative keyword list then dont append to result
         for value in search_value_list: 
-            if len(get_close_matches(value.casefold(), map(str.casefold, account.negativeTerms), cutoff=0.8)) > 0: 
+            if len(get_close_matches(value.casefold(), map(str.casefold, account.negativeTerms), cutoff=0.84)) > 0: 
                 negative_matches += 1
         for value in search_value_list: 
             if any(item.casefold() in map(str.casefold, synonyms) in synonyms for item in map(str.casefold, account.negativeTerms)):
