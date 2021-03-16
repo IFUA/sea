@@ -837,7 +837,6 @@ def questions():
     
     # Search function, parameters coming from the filter property
     results=search_text(account_list,str(content["filter"]["search_text"]),category=Category,amount=Amount,duration=Duration,usage=Usage)
-
     #Übergeordnete categories branch
     if content["answer_id"] in ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'c10', 'c11', 'c12']:
         results=categorySearch(account_list,str(content["answer_id"]))
@@ -874,12 +873,10 @@ def questions():
         #print(l_question_logic)
         
         #print(question_nr)
-
         #Adding to the existing filter, the new question-answer pair
         filters=str(content["filter"]).strip("}")+",'"+str(str_question)+"':'"+str(d_answers[int(content["answer_id"])]["text"])+"'}"
         filters=filters.replace("'","\"")
         filtero=json.loads(filters)
-
         # if there is 1 result-> stage3 logic
         if len(results)==1: 
             response=stage3_2(results,content,filtero)
